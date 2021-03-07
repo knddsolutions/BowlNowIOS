@@ -16,12 +16,27 @@ struct GlobalAdminHome: View {
     @State var authToken: String = UserDefaults.standard.string(forKey: "AuthToken") ?? ""
     var body: some View {
         VStack {
-            Text("Hi")
+            List(pendingCenters.indices, id: \.self) { index in Text("\(index) \(self.pendingCenters[index])" as String)
+                VStack {
+                    Button(action: {
+                        print("Approved")
+                    }) {
+                        Text("Approve").foregroundColor(.black)
+                    }.buttonStyle(BorderlessButtonStyle()).background(Color(.green)).padding()
+                    Button(action: {
+                        print("Declined")
+                    }) {
+                        Text("Decline").foregroundColor(.black)
+                    }.buttonStyle(BorderlessButtonStyle()).background(Color(.red)).padding()
+                }
+            }
         }.onAppear(perform: {
             requests.GetPendingCenters(AuthToken: authToken) {(success, message, pendingData) in
                 if success == true {
                     self.pendingCenters = pendingData
-                    print(pendingCenters)
+                    for item in pendingCenters {
+                        print(item)
+                    }
                 }
                 else {
                     self.message = message

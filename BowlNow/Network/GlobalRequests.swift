@@ -10,8 +10,8 @@ import SwiftUI
 import UIKit
 import Combine
 
-class GlobalRequests: ObservableObject {
-    typealias completion = ((_ success: Bool, _ message: String, _ pendingData: [Any]) -> Void)
+class GlobalRequests {
+    typealias completion = ((_ success: Bool, _ message: String, _ pendingCenters: [Any]) -> Void)
     
     func GetPendingCenters(AuthToken: String, completion: @escaping completion)  {
     
@@ -34,6 +34,7 @@ class GlobalRequests: ObservableObject {
                         return
                     }
                     DispatchQueue.main.async {
+                        print(type(of: finalData.Results))
                         completion(true, "", finalData.Results)
                         return
                     }

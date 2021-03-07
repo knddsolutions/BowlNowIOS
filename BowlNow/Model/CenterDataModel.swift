@@ -19,11 +19,11 @@ struct ApiResponse: Decodable {
     let Results: String
 }
 
-struct PendingCentersList: Decodable {
+struct PendingCentersList: Codable{
     var Results: [PendingCenterObject]
 }
 
-struct PendingCenterObject: Decodable {
+struct PendingCenterObject: Codable{
     let Platform: String
     let Email: String
     let MemberID: String
@@ -32,4 +32,5 @@ struct PendingCenterObject: Decodable {
     let Path: String?
     let Timestamp: String
     let Moid: String
+    
 }
