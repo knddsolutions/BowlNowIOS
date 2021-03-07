@@ -11,12 +11,12 @@ import UIKit
 import Combine
 
 class GlobalRequests {
-    typealias completion = ((_ success: Bool, _ message: String, _ pendingCenters: [Any]) -> Void)
+    typealias completion = ((_ success: Bool, _ message: String, _ pendingCenters: [PendingCenterObject]) -> Void)
     
     func GetPendingCenters(AuthToken: String, completion: @escaping completion)  {
     
         guard let url = URL(string: "https://openbowlservice.com/api/v1/center/pending") else {
-            completion(false, "Bad Url", [""])
+            completion(false, "Bad Url", [])
             return
         }
         
@@ -30,7 +30,7 @@ class GlobalRequests {
                 if httpResponse.statusCode == 200{
                     guard let data = data else {return}
                     guard let finalData = try? JSONDecoder().decode(PendingCentersList.self, from: data) else {
-                        completion(false, "Json response is corrupt...Please try again!", [""])
+                        completion(false, "Json response is corrupt...Please try again!", [])
                         return
                     }
                     DispatchQueue.main.async {
@@ -42,17 +42,17 @@ class GlobalRequests {
                 else if httpResponse.statusCode == 400{
                     guard let data = data else {return}
                     guard let finalData = try? JSONDecoder().decode(ApiResponse.self, from: data) else {
-                        completion(false, "Json response is corrupt...Please try again!", [""])
+                        completion(false, "Json response is corrupt...Please try again!", [])
                         return
                     }
                     DispatchQueue.main.async {
-                        completion(false, finalData.Results, [""])
+                        completion(false, finalData.Results, [])
                         }
                     return
                 }
                 else{
                     DispatchQueue.main.async {
-                        completion(false, "Oh no! Something went wrong on our end... Please try again.", [""])
+                        completion(false, "Oh no! Something went wrong on our end... Please try again.", [])
                         }
                     return
                 }

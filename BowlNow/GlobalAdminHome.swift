@@ -34,8 +34,9 @@ struct GlobalAdminHome: View {
             requests.GetPendingCenters(AuthToken: authToken) {(success, message, pendingData) in
                 if success == true {
                     self.pendingCenters = pendingData
-                    for item in pendingCenters {
-                        print(item)
+                    print(pendingCenters)
+                    for item in pendingData {
+                        print(item.MemberID)
                     }
                 }
                 else {

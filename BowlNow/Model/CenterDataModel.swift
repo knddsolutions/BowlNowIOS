@@ -19,11 +19,11 @@ struct ApiResponse: Decodable {
     let Results: String
 }
 
-struct PendingCentersList: Codable{
+struct PendingCentersList: Decodable{
     var Results: [PendingCenterObject]
 }
 
-struct PendingCenterObject: Codable{
+struct PendingCenterObject: Decodable{
     let Platform: String
     let Email: String
     let MemberID: String
