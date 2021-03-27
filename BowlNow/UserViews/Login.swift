@@ -18,11 +18,11 @@ enum ModalView {
 
 struct Login: View {
     @Environment(\.colorScheme) var colorScheme
-    let request = UserRequests()
-    @State var authToken: String = UserDefaults.standard.string(forKey: "AuthToken") ?? ""
+    var request = UserRequests()
+    var globalRequests = GlobalRequests()
+    var centerUserRequests = CenterUserRequests()
     @State var email: String = UserDefaults.standard.string(forKey: "storeEmail") ?? ""
-    @State var password: String = UserDefaults.standard.string(forKey: "storePassword")
-        ?? ""
+    @State var password: String = UserDefaults.standard.string(forKey: "storePassword") ?? ""
     @State private var showingSignUp = false
     @State private var showingForgotPassword = false
     @State private var remember: Bool = true
@@ -33,6 +33,9 @@ struct Login: View {
     @State var modalView: ModalView?
     @State var message: String = ""
     @State var title: String = ""
+    @State var ActiveCenters: [CenterObject] = []
+    @State private var userCenters: [UserObject] = []
+    @State private var Moids: [String] = []
     
     var body: some View {
         NavigationView {
@@ -69,7 +72,7 @@ struct Login: View {
                                 }.toggleStyle(CheckboxToggleStyle()).padding([.leading,.bottom])
                                 Spacer()
                                 NavigationLink(destination: GlobalAdminHome(), isActive: $isAdminLogged) { EmptyView() }
-                                NavigationLink(destination: MyCenters(), isActive: $isUserLogged) { EmptyView() }
+                                NavigationLink(destination: MyCenters(ActiveCenters: $ActiveCenters), isActive: $isUserLogged) { EmptyView() }
                                 Button(action: {
                                     if (self.email.count == 0) {
                                         self.message = "Email cannot be empty"
@@ -82,7 +85,27 @@ struct Login: View {
                                     else {
                                         request.LoginRequest(email: self.email, password: self.password) {(success, message) in
                                             if success == true && message == "User" {
-                                                self.isUserLogged.toggle()
+                                                globalRequests.ActiveCentersList() {(success, message, pendingData) in
+                                                    if success == true {
+                                                        ActiveCenters = pendingData
+                                                        let AuthToken: String = UserDefaults.standard.string(forKey: "AuthToken") ?? ""
+                                                        print(AuthToken)
+                                                        centerUserRequests.GetCenterUser(AuthToken: AuthToken, CenterMoid: "") {(success, message, userData) in
+                                                            if success == true {
+                                                                self.userCenters = userData
+                                                                for center in userCenters {
+                                                                    Moids.append(center.CenterMoid)
+                                                                }
+                                                                UserDefaults.standard.set(Moids, forKey: "MyCenters")
+                                                                self.isUserLogged.toggle()
+                                                            }
+                                                        }
+                                                    }
+                                                    else {
+                                                        self.message = message
+                                                        self.showingAlert.toggle()
+                                                    }
+                                                }
                                             }
                                             else if success == true && message == "Admin" {
                                                 self.isAdminLogged.toggle()
@@ -172,19 +195,53 @@ struct Login: View {
             }.alert(isPresented: $showingAlert) {
                 Alert(title: Text((title)), message: Text((message)), dismissButton: .default(Text("OK")))
                 
+            }.onAppear(perform:  {
+                CheckToken()
+            })
+        }
+    }
+    func CheckToken() {
+        if UserDefaults.standard.string(forKey: "AuthToken") != nil {
+            let AuthToken: String = UserDefaults.standard.string(forKey: "AuthToken") ?? ""
+            request.VerifyAuth(authToken: AuthToken) {(success, message) in
+                if success == true && message == "User" {
+                    globalRequests.ActiveCentersList() {(success, message, pendingData) in
+                        if success == true {
+                            print(AuthToken)
+                            ActiveCenters = pendingData
+                            centerUserRequests.GetCenterUser(AuthToken: AuthToken, CenterMoid: "") {(success, message, userData) in
+                                if success == true {
+                                    self.userCenters = userData
+                                    for center in userCenters {
+                                        Moids.append(center.CenterMoid)
+                                    }
+                                    UserDefaults.standard.set(Moids, forKey: "MyCenters")
+                                    self.isUserLogged.toggle()
+                                }
+                            }
+                        }
+                        else {
+                            self.message = message
+                            self.showingAlert.toggle()
+                        }
+                    }
+                }
+                else if success == true && message == "Admin" {
+                    self.isAdminLogged.toggle()
+                }
+                else {
+                    self.title = "Login Failed!"
+                    self.message = message
+                    self.showingAlert.toggle()
+                }
             }
         }
     }
 }
 
 
+
 //TODO CHECK IF FACEBOOK USER IS ALREADY LOGGED IN
-struct LoginFailed: Decodable {
-    let Results : String
-}
-struct LoginSuccess: Decodable {
-    let AuthToken, AccessLevel: String
-}
 func SaveData(email: String, password: String) {
     UserDefaults.standard.set(email, forKey: "storeEmail")
     UserDefaults.standard.set(password, forKey: "storePassword")

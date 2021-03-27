@@ -8,22 +8,15 @@
 import Foundation
 import SwiftUI
 
-struct CenterData: Codable, Identifiable {
-    let id: String
-    let MemberID: String
-    let Email: String
-    let Logo: String
-}
-
 struct ApiResponse: Decodable {
     let Results: String
 }
 
-struct PendingCentersList: Decodable{
-    var Results: [PendingCenterObject]
+struct CentersList: Decodable{
+    var Results: [CenterObject]
 }
 
-struct PendingCenterObject: Decodable{
+struct CenterObject: Decodable, Hashable{
     let Platform: String
     let Email: String
     let MemberID: String
@@ -32,5 +25,5 @@ struct PendingCenterObject: Decodable{
     let Path: String?
     let Timestamp: String
     let Moid: String
-    
+    let BannerURL: String?
 }
