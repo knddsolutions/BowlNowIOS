@@ -19,12 +19,13 @@ struct MyCenters: View {
             ZStack {
                 Color.white.edgesIgnoringSafeArea(.all)
                 VStack{
+                    NavigationLink(destination: Home(), isActive: $isHome) { EmptyView() }
                     ScrollView {
-                        NavigationLink(destination: Home(), isActive: $isHome) { EmptyView() }
                         ForEach(ActiveCenters, id: \.Moid) { center in
                             if myCenters.contains(center.Moid) {
                                 let url = URL(string: center.BannerURL!)
                                 Button(action: {
+                                    UserDefaults.standard.set(center.BannerURL, forKey: "BannerURL")
                                     self.isHome.toggle()
                                 }) {
                                     KFImage(url)

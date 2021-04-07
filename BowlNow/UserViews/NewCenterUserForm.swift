@@ -78,6 +78,7 @@ struct NewCenterUserForm: View {
                         .padding([.horizontal,.bottom])
                     }.background(Color.white).cornerRadius(10).shadow(radius: 5).padding()
                     Spacer()
+                    SwipeDown()
                 }.background(Image("retro_background").resizable()
                                 .aspectRatio(geometry.size, contentMode: .fill)
                                 .edgesIgnoringSafeArea(.all).opacity(0.1))

@@ -18,14 +18,14 @@ struct ForgotPassword: View {
             ZStack {
                 Color.white.edgesIgnoringSafeArea(.all)
                 VStack {
-                    Image("BowlNow_Logo").resizable().scaledToFit().frame(maxWidth: 150).padding(.top)
-                    Text("Oops!").font(.largeTitle).bold().foregroundColor(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
-                    Text("Did you forget your password?").font(.headline).padding(.bottom)
-                    Text("Please enter your email address below to recieve an account recovery email.").font(.headline).padding(.horizontal).multilineTextAlignment(.center)
+                    Image("BowlNow_Logo")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(maxWidth: 150)
+                        .padding(.top)
+                    ResetInfo()
                     VStack {
-                        VStack {
-                            TextField("Enter your email", text: $Email).foregroundColor(.black).padding()
-                        }.background(Color.white).cornerRadius(10).shadow(radius: 5).padding()
+                        ResetPasswordField(Email: $Email)
                         Button(action: {
                             requests.PasswordReset(email: self.Email) {(success, message) in
                                 if success == true {
@@ -39,14 +39,21 @@ struct ForgotPassword: View {
                                 self.showingAlert.toggle()
                             }
                         }){
-                            Text("Recover Account").foregroundColor(.white).bold()
+                            Text("Recover Account")
+                                .foregroundColor(.white)
+                                .bold()
                         }.frame(maxWidth: .infinity, minHeight: 50, maxHeight: 50)
                         .background(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
                         .cornerRadius(10)
                         .padding([.horizontal,.bottom])
-                    }.background(Color.white).cornerRadius(10).shadow(radius: 5).padding()
+                    }.background(Color.white)
+                    .cornerRadius(10)
+                    .shadow(radius: 5)
+                    .padding()
                     Spacer()
-                }.background(Image("retro_background").resizable()
+                    SwipeDown()
+                }.background(Image("retro_background")
+                                .resizable()
                                 .aspectRatio(geometry.size, contentMode: .fill)
                                 .edgesIgnoringSafeArea(.all).opacity(0.1))
             }.alert(isPresented: $showingAlert) {
@@ -57,8 +64,34 @@ struct ForgotPassword: View {
     }
 }
 
-struct resetResponse: Decodable {
-    let Results: String
+struct ResetInfo: View {
+    var body: some View {
+        Text("Oops!")
+            .font(.largeTitle)
+            .bold()
+            .foregroundColor(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
+        Text("Did you forget your password?")
+            .font(.headline)
+            .padding(.bottom)
+        Text("Please enter your email address below to recieve an account recovery email.")
+            .font(.headline)
+            .padding(.horizontal)
+            .multilineTextAlignment(.center)
+    }
+}
+
+struct ResetPasswordField: View {
+    @Binding var Email: String
+    var body: some View {
+        VStack {
+            TextField("Enter your email", text: $Email)
+                .foregroundColor(.black)
+                .padding()
+        }.background(Color.white)
+        .cornerRadius(10)
+        .shadow(radius: 5)
+        .padding()
+    }
 }
 
 struct ForgotPassword_Previews: PreviewProvider {

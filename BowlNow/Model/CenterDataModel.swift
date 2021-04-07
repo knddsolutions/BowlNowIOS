@@ -12,6 +12,10 @@ struct ApiResponse: Decodable {
     let Results: String
 }
 
+struct registrationResponse: Decodable {
+    let Results: String
+}
+
 struct CentersList: Decodable{
     var Results: [CenterObject]
 }

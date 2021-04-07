@@ -174,7 +174,10 @@ struct Login: View {
 
 struct Logo: View {
     var body: some View {
-        Image("BowlNow_Logo").resizable().scaledToFit().frame(maxWidth: 250)
+        Image("BowlNow_Logo")
+            .resizable()
+            .scaledToFit()
+            .frame(maxWidth: 250)
         Spacer()
     }
 }
@@ -189,9 +192,12 @@ struct EmailField: View {
                     .padding()
                 TextField("Enter your email", text: $email)
                     .foregroundColor(.black)
+                    .padding()
             }
-        }.cornerRadius(10).shadow(radius: 5)
-        .padding([.horizontal, .top])
+        }.background(Color.white)
+        .cornerRadius(10)
+        .shadow(radius: 5)
+        .padding([.horizontal,.top])
     }
 }
 
@@ -203,9 +209,12 @@ struct PasswordField: View {
                 Image(systemName: "lock")
                     .foregroundColor(.gray)
                     .padding()
-                TextField("Enter your password", text: $password).foregroundColor(.black)
+                TextField("Enter your password", text: $password)
+                    .foregroundColor(.black)
+                    .padding()
             }
-        }.cornerRadius(10)
+        }.background(Color.white)
+        .cornerRadius(10)
         .shadow(radius: 5)
         .padding(.horizontal)
     }
@@ -216,7 +225,8 @@ struct ToggleButton: View {
     var body: some View {
         Toggle(isOn: $remember) {
             Text("Remember Me").foregroundColor(.gray)
-        }.toggleStyle(CheckboxToggleStyle()).padding([.leading,.bottom])
+        }.toggleStyle(CheckboxToggleStyle())
+        .padding([.leading,.bottom])
     }
 }
 
@@ -317,6 +327,19 @@ struct CheckboxToggleStyle: ToggleStyle {
                 .foregroundColor(.gray)
                 .onTapGesture { configuration.isOn.toggle() }
         }
+    }
+}
+
+struct SwipeDown: View {
+    var body: some View {
+        Text("Swipe down to close")
+        VStack {
+            LinearGradient(gradient: Gradient(colors: [.white, (Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))]), startPoint: .top, endPoint: .bottom)
+                    .mask(Image(systemName: "arrow.down")
+                        .resizable()
+                        .frame(width: 50, height: 50, alignment: .center)
+                        .padding())
+        }.frame(width: 50, height: 50).padding(.bottom)
     }
 }
 

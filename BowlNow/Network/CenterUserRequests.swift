@@ -47,7 +47,6 @@ class CenterUserRequests {
                         return
                     }
                     DispatchQueue.main.async {
-                        print(finalData.Results)
                         completion(false, finalData.Results, [])
                         }
                     return
@@ -60,7 +59,6 @@ class CenterUserRequests {
                 }
                 else{
                     DispatchQueue.main.async {
-                        print(httpResponse.statusCode)
                         completion(false, "Oh no! Something went wrong on our end... Please try again.", [])
                         }
                     return

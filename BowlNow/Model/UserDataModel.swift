@@ -29,3 +29,7 @@ struct UserObject: Decodable, Hashable{
     let IamUserMoid: String
     let Moid: String
 }
+
+struct resetResponse: Decodable {
+    let Results: String
+}
