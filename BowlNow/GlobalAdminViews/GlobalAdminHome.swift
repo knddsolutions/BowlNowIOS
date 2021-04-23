@@ -8,69 +8,53 @@
 import SwiftUI
 
 struct GlobalAdminHome: View {
-    @State private var message: String = ""
-    @State private var title: String = ""
-    @State private var showingAlert = false
-    @State private var pendingCenters: [CenterObject] = []
-    var requests = GlobalRequests()
+    @State private var showingPendingCenters: Bool = false
+    @State private var showingPatchCenter: Bool = false
+    @Binding var ActiveCenters: [CenterObject]
     var body: some View {
-        VStack {
-            List {
-                ForEach(pendingCenters, id: \.self) { center in
-                    HStack {
-                        Text("Center Name:").font(.headline)
-                        Spacer()
-                        Text("\(center.Center)").font(.headline)
-                    }
-                    HStack {
-                        Text("Bpaa #:").font(.headline)
-                        Spacer()
-                        Text("\(center.MemberID)").font(.headline)
-                    }
-                    HStack {
-                        Text("Moid:").font(.headline)
-                        Spacer()
-                        Text("\(center.Moid)").font(.headline)
-                    }
-                    HStack {
-                        Button(action: {
-                            print("Approved \(center.Moid)")
-                        }) {
-                            Text("Approve").foregroundColor(.black)
-                        }.frame(maxWidth: .infinity, minHeight: 50, maxHeight: 50).buttonStyle(BorderlessButtonStyle()).background(Color(.green)).cornerRadius(10).padding()
-                        Button(action: {
-                            print("Declined")
-                        }) {
-                            Text("Decline").foregroundColor(.black)
-                        }.buttonStyle(BorderlessButtonStyle()).frame(maxWidth: .infinity, minHeight: 50, maxHeight: 50).background(Color(.red)).cornerRadius(10).padding()
-                    }
-                }
-            }
-        }.onAppear(perform: {
-            CheckToken()
-        }).alert(isPresented: $showingAlert) {
-            Alert(title: Text((title)), message: Text((message)), dismissButton: .default(Text("OK")))
-            
-        }
-    }
-    func CheckToken() {
-        if UserDefaults.standard.string(forKey: "AuthToken") != nil {
-            let AuthToken: String = UserDefaults.standard.string(forKey: "AuthToken") ?? ""
-            requests.GetPendingCenters(AuthToken: AuthToken) {(success, message, pendingData) in
-                if success == true {
-                    pendingCenters = pendingData
-                }
-                else {
-                    self.message = message
-                    self.showingAlert.toggle()
-                }
-            }
+        GeometryReader { geometry in
+            VStack {
+                NavigationLink(destination: PendingPatchCenter(ActiveCenters: $ActiveCenters), isActive: $showingPatchCenter) { EmptyView() }
+                NavigationLink(destination: PendingCenters(), isActive: $showingPendingCenters) { EmptyView() }
+                Text("Hello Global Admin,")
+                    .font(.largeTitle)
+                    .bold()
+                    .frame(maxWidth:.infinity, alignment: .leading)
+                    .padding()
+                    .fixedSize(horizontal: false, vertical: true)
+                    .foregroundColor(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
+                Text("What would you like to do today?")
+                    .bold()
+                    .padding(.horizontal)
+                    .frame(maxWidth:.infinity, alignment: .leading)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .foregroundColor(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
+                Spacer()
+                Button(action: {
+                    showingPendingCenters.toggle()
+                }) {
+                    Text("Get Pending Centers")
+                        .foregroundColor(.white)
+                        .bold()
+                }.frame(maxWidth: .infinity, maxHeight: geometry.size.height/12)
+                .background(Color(red: 131/255, green: 202/255, blue: 238/255, opacity: 1.0))
+                .cornerRadius(10)
+                .padding(.horizontal)
+                Button(action: {
+                    showingPatchCenter.toggle()
+                }) {
+                    Text("Patch Image Url")
+                        .foregroundColor(.white)
+                        .bold()
+                }.frame(maxWidth: .infinity, maxHeight: geometry.size.height/12)
+                .background(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
+                .cornerRadius(10)
+                .padding()
+                Spacer()
+            }.onAppear(perform: {
+                print(ActiveCenters)
+            })
         }
     }
 }
 
-struct AdminHome_Previews: PreviewProvider {
-    static var previews: some View {
-        GlobalAdminHome()
-    }
-}

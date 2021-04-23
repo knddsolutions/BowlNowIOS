@@ -148,7 +148,7 @@ class GlobalRequests {
                             return
                         }
                         DispatchQueue.main.async {
-                            completion(true, finalData.Results, [])
+                            completion(false, finalData.Results, [])
                         }
                         return
                     }
@@ -161,13 +161,72 @@ class GlobalRequests {
         }.resume()
     }
     
-    func ApproveCenter(AuthToken: String, Moid: String, Url: String, completion: @escaping completion) {
-        guard let url =  URL(string: "https://openbowlservice.com/api/v1/center/pending") else {
+    func CenterPatch(BannerURL: String, Moid: String, AuthToken: String, completion: @escaping completion) {
+        guard let url =  URL(string: "https://openbowlservice.com/api/v1/center/registration/\(Moid)") else {
             completion(false, "Bad Url", [])
             return
         }
         
-        let body: [String: String] = ["Moid": Moid]
+        let body: [String: String] = ["BannerURL": BannerURL]
+        
+        guard let finalbody = try? JSONSerialization.data(withJSONObject: body) else {
+            completion(false, "Json body is corrupt...Please try again!", [])
+            return
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "PATCH"
+        request.httpBody = finalbody
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue(AuthToken, forHTTPHeaderField: "X-Auth-Token")
+              
+        URLSession.shared.dataTask(with: request) { (data, response, error) in
+                  
+            if let httpResponse = response as? HTTPURLResponse{
+                if httpResponse.statusCode == 200{
+                    guard let data = data else {return}
+                    let dataString = String(data: data, encoding: .utf8)
+                    print(dataString)
+                    guard let finalData = try? JSONDecoder().decode(CenterObject.self, from: data) else {
+                        DispatchQueue.main.async {
+                            completion(false, "Json response is corrupt... Please try again!", [])
+                        }
+                        return
+                    }
+                    DispatchQueue.main.async {
+                        completion(true, finalData.BannerURL ?? "", [])
+                    }
+                    return
+                }
+                    else if httpResponse.statusCode == 400{
+                        guard let data = data else {return}
+                        guard let finalData = try? JSONDecoder().decode(ApiResponse.self, from: data) else {
+                            DispatchQueue.main.async {
+                                completion(false, "Json response is corrupt... Please try again!", [])
+                            }
+                            return
+                        }
+                        DispatchQueue.main.async {
+                            completion(false, finalData.Results, [])
+                        }
+                        return
+                    }
+                    else {
+                        DispatchQueue.main.async {
+                            completion(false, "Oh no! Something went wrong on our end... Please try again.", [])
+                        }
+                    }
+            }
+        }.resume()
+    }
+    
+    func ApproveCenter(AuthToken: String, Moid: String, completion: @escaping completion) {
+        guard let url =  URL(string: "https://openbowlservice.com/api/v1/center/pending/\(Moid)") else {
+            completion(false, "Bad Url", [])
+            return
+        }
+        
+        let body: [String: String] = [:]
         
         guard let finalbody = try? JSONSerialization.data(withJSONObject: body) else {
             completion(false, "Json body is corrupt...Please try again!", [])
@@ -205,7 +264,7 @@ class GlobalRequests {
                             return
                         }
                         DispatchQueue.main.async {
-                            completion(true, finalData.Results, [])
+                            completion(false, finalData.Results, [])
                         }
                         return
                     }
@@ -219,23 +278,16 @@ class GlobalRequests {
     }
     
     func DeclineCenter(AuthToken: String, Moid: String, completion: @escaping completion) {
-        guard let url =  URL(string: "https://openbowlservice.com/api/v1/center/pending") else {
+        guard let url =  URL(string: "https://openbowlservice.com/api/v1/center/pending/\(Moid)") else {
             completion(false, "Bad Url", [])
-            return
-        }
-        
-        let body: [String: String] = ["Moid": Moid]
-        
-        guard let finalbody = try? JSONSerialization.data(withJSONObject: body) else {
-            completion(false, "Json body is corrupt...Please try again!", [])
             return
         }
         
         var request = URLRequest(url: url)
         request.httpMethod = "DELETE"
-        request.httpBody = finalbody
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue(AuthToken, forHTTPHeaderField: "X-Auth-Token")
+        print(url)
               
         URLSession.shared.dataTask(with: request) { (data, response, error) in
                   
@@ -262,7 +314,7 @@ class GlobalRequests {
                             return
                         }
                         DispatchQueue.main.async {
-                            completion(true, finalData.Results, [])
+                            completion(false, finalData.Results, [])
                         }
                         return
                     }

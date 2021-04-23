@@ -24,7 +24,7 @@ struct Login: View {
     @State var email: String = UserDefaults.standard.string(forKey: "storeEmail") ?? ""
     @State var password: String = UserDefaults.standard.string(forKey: "storePassword") ?? ""
     @State private var remember: Bool = true
-    @State private var showingAlert = false
+    @State private var showingAlert: Bool = false
     @State private var showModal = false
     @State private var isUserLogged: Bool = false
     @State private var isAdminLogged: Bool = false
@@ -32,9 +32,7 @@ struct Login: View {
     @State var message: String = ""
     @State var title: String = ""
     @State var ActiveCenters: [CenterObject] = []
-    @State private var userCenters: [UserObject] = []
     @State private var Moids: [String] = []
-    
     var body: some View {
         NavigationView {
             GeometryReader { geometry in
@@ -44,12 +42,12 @@ struct Login: View {
                         .aspectRatio(geometry.size, contentMode: .fill)
                         .edgesIgnoringSafeArea(.all)
                     RoundedRectangle(cornerRadius: 10)
-                        .edgesIgnoringSafeArea(/*@START_MENU_TOKEN@*/.all/*@END_MENU_TOKEN@*/)
+                        .edgesIgnoringSafeArea(.all)
                         .foregroundColor(.white)
                         .frame(width: geometry.size.width, height: geometry.size.height/3, alignment: .bottom)
                         VStack {
                             Logo()
-                            NavigationLink(destination: GlobalAdminHome(), isActive: $isAdminLogged) { EmptyView() }
+                            NavigationLink(destination: GlobalAdminHome(ActiveCenters: $ActiveCenters), isActive: $isAdminLogged) { EmptyView() }
                             NavigationLink(destination: MyCenters(ActiveCenters: $ActiveCenters), isActive: $isUserLogged) { EmptyView() }
                         VStack {
                             EmailField(email: $email)
@@ -91,10 +89,10 @@ struct Login: View {
             let AuthToken: String = UserDefaults.standard.string(forKey: "AuthToken") ?? ""
             request.VerifyAuth(authToken: AuthToken) {(success, message) in
                 if success == true && message == "User" {
-                   GetActiveCenters()
+                    GetActiveCenters(Type: "User")
                 }
                 else if success == true && message == "Admin" {
-                    self.isAdminLogged.toggle()
+                    GetActiveCenters(Type: "Admin")
                 }
                 else {
                     self.title = "Login Failed!"
@@ -125,10 +123,10 @@ struct Login: View {
     func Login() {
         request.LoginRequest(email: self.email, password: self.password) {(success, message) in
             if success == true && message == "User" {
-               GetActiveCenters()
+               GetActiveCenters(Type: "User")
             }
             else if success == true && message == "Admin" {
-                self.isAdminLogged.toggle()
+                GetActiveCenters(Type: "Admin")
             }
             else {
                 self.title = "Login Failed!"
@@ -138,12 +136,16 @@ struct Login: View {
         }
     }
     
-    func GetActiveCenters() {
+    func GetActiveCenters(Type: String) {
         globalRequests.ActiveCentersList() {(success, message, pendingData) in
-            if success == true {
+            if success == true && Type == "User" {
                 ActiveCenters = pendingData
                 let AuthToken: String = UserDefaults.standard.string(forKey: "AuthToken") ?? ""
                 GetCenterUsers(AuthToken: AuthToken)
+            }
+            else if success == true && Type == "Admin" {
+                ActiveCenters = pendingData
+                self.isAdminLogged.toggle()
             }
             else {
                 self.title = "Failed To Load Center Data"
@@ -156,8 +158,7 @@ struct Login: View {
     func GetCenterUsers(AuthToken: String) {
         centerUserRequests.GetCenterUser(AuthToken: AuthToken, CenterMoid: "") {(success, message, userData) in
             if success == true {
-                self.userCenters = userData
-                for center in userCenters {
+                for center in userData {
                     Moids.append(center.CenterMoid)
                 }
                 UserDefaults.standard.set(Moids, forKey: "MyCenters")
@@ -187,9 +188,8 @@ struct EmailField: View {
     var body: some View {
         VStack {
             HStack {
-                Image(systemName: "person")
-                    .foregroundColor(.gray)
-                    .padding()
+                Image("Bowl_now_pin").resizable().scaledToFit().frame(maxWidth: 10, maxHeight: 30, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
+                    .padding(.leading)
                 TextField("Enter your email", text: $email)
                     .foregroundColor(.black)
                     .padding()
@@ -206,9 +206,8 @@ struct PasswordField: View {
     var body: some View {
         VStack {
             HStack {
-                Image(systemName: "lock")
-                    .foregroundColor(.gray)
-                    .padding()
+                Image("Bowl_now_pin").resizable().scaledToFit().frame(maxWidth: 10, maxHeight: 30, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
+                    .padding(.leading)
                 TextField("Enter your password", text: $password)
                     .foregroundColor(.black)
                     .padding()
@@ -333,13 +332,14 @@ struct CheckboxToggleStyle: ToggleStyle {
 struct SwipeDown: View {
     var body: some View {
         Text("Swipe down to close")
+            .font(.subheadline)
         VStack {
             LinearGradient(gradient: Gradient(colors: [.white, (Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))]), startPoint: .top, endPoint: .bottom)
                     .mask(Image(systemName: "arrow.down")
                         .resizable()
-                        .frame(width: 50, height: 50, alignment: .center)
+                        .frame(width: 40, height: 40, alignment: .center)
                         .padding())
-        }.frame(width: 50, height: 50).padding(.bottom)
+        }.frame(width: 40, height: 40).padding(.bottom)
     }
 }
 
