@@ -17,38 +17,7 @@ struct PendingPatchCenter: View {
         GeometryReader { geometry in
             VStack {
                 ScrollView {
-                    ForEach(ActiveCenters, id: \.Moid) { center in
-                        if center.BannerURL == "" {
-                            VStack {
-                                HStack {
-                                    Text("Center Name: ")
-                                        .foregroundColor(.black)
-                                        .bold()
-                                    Spacer()
-                                    Text("\(center.Center)")
-                                        .foregroundColor(.black)
-                                }.padding(.top)
-                                HStack {
-                                    Text("Moid: ")
-                                        .foregroundColor(.black)
-                                        .bold()
-                                    Spacer()
-                                    Text("\(center.Moid)")
-                                        .foregroundColor(.black)
-                                }.padding()
-                                Button(action: {
-                                    centerMoid = center.Moid
-                                    showingPatch.toggle()
-                                }){
-                                    Text("Patch")
-                                        .foregroundColor(.white)
-                                }.frame(width: geometry.size.width/2, height: geometry.size.height/15)
-                                .background(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
-                                .cornerRadius(10)
-                                Divider()
-                            }
-                        }
-                    }
+                    CentersToPatchView(ActiveCenters: $ActiveCenters, showingPatch: $showingPatch, centerMoid: $centerMoid)
                 }
             }.sheet(isPresented: $showingPatch) {
                 PatchCenter(centerMoid: $centerMoid)
@@ -57,3 +26,43 @@ struct PendingPatchCenter: View {
     }
 }
 
+
+struct CentersToPatchView: View {
+    @Binding var ActiveCenters: [CenterObject]
+    @Binding var showingPatch: Bool
+    @Binding var centerMoid: String
+    var body: some View {
+        ForEach(ActiveCenters, id: \.Moid) { center in
+            if center.BannerURL == "" {
+                VStack {
+                    HStack {
+                        Text("Center Name: ")
+                            .foregroundColor(.black)
+                            .bold()
+                        Spacer()
+                        Text("\(center.Center)")
+                            .foregroundColor(.black)
+                    }.padding(.top)
+                    HStack {
+                        Text("Moid: ")
+                            .foregroundColor(.black)
+                            .bold()
+                        Spacer()
+                        Text("\(center.Moid)")
+                            .foregroundColor(.black)
+                    }.padding()
+                    Button(action: {
+                        centerMoid = center.Moid
+                        showingPatch.toggle()
+                    }){
+                        Text("Patch")
+                            .foregroundColor(.white)
+                    }.frame(maxWidth: .infinity/2, maxHeight: 40)
+                    .background(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
+                    .cornerRadius(10)
+                    Divider()
+                }
+            }
+        }
+    }
+}
