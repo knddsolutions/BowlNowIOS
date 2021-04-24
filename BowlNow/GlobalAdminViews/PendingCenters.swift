@@ -18,25 +18,6 @@ struct PendingCenters: View {
         VStack {
             PendingCentersListView(pendingCenters: $pendingCenters)
             RefreshButton(pendingCenters: $pendingCenters)
-        }.onAppear(perform: {
-            CheckToken()
-        })
-        .alert(isPresented: $showingAlert) {
-            Alert(title: Text((title)), message: Text((message)), dismissButton: .default(Text("OK")))
-        }
-    }
-    func CheckToken() {
-        if UserDefaults.standard.string(forKey: "AuthToken") != nil {
-            let AuthToken: String = UserDefaults.standard.string(forKey: "AuthToken") ?? ""
-            globalAdminRequests.GetPendingCenters(AuthToken: AuthToken) {(success, message, pendingData) in
-                if success == true {
-                    pendingCenters = pendingData
-                }
-                else {
-                    self.message = message
-                    self.showingAlert.toggle()
-                }
-            }
         }
     }
 }
@@ -147,6 +128,22 @@ struct RefreshButton: View {
         .alert(isPresented: $showingAlert) {
             Alert(title: Text((title)), message: Text((message)), dismissButton: .default(Text("OK")))
             
+        }.onAppear(perform: {
+            CheckToken()
+        })
+    }
+    func CheckToken() {
+        if UserDefaults.standard.string(forKey: "AuthToken") != nil {
+            let AuthToken: String = UserDefaults.standard.string(forKey: "AuthToken") ?? ""
+            globalAdminRequests.GetPendingCenters(AuthToken: AuthToken) {(success, message, pendingData) in
+                if success == true {
+                    pendingCenters = pendingData
+                }
+                else {
+                    self.message = message
+                    self.showingAlert.toggle()
+                }
+            }
         }
     }
 }
