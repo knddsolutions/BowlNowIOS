@@ -30,6 +30,17 @@ struct UserObject: Decodable, Hashable{
     let Moid: String
 }
 
+struct UserPoints: Decodable {
+    var Results: [UserPointsObject]
+}
+
+struct UserPointsObject: Decodable, Hashable {
+    let Points: Int
+    let CenterUserMoid: String
+    let CenterMoid: String
+    let Moid: String
+}
+
 struct resetResponse: Decodable {
     let Results: String
 }
