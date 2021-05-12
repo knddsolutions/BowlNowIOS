@@ -24,9 +24,12 @@
 		6A70306525CDE6A5003EB684 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 6A70306425CDE6A5003EB684 /* Kingfisher */; };
 		6A8339A525EF54540055546B /* UserRequests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A8339A425EF54540055546B /* UserRequests.swift */; };
 		6A85E5B825E01852009AA0F3 /* CenterDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A85E5B725E01852009AA0F3 /* CenterDataModel.swift */; };
+		6A90B691263523CD00C092DB /* Help.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A90B690263523CD00C092DB /* Help.swift */; };
 		6A98BDD525D376610074F7D5 /* Loyalty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A98BDD425D376610074F7D5 /* Loyalty.swift */; };
 		6A98BDD825D376700074F7D5 /* Coupons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A98BDD725D376700074F7D5 /* Coupons.swift */; };
 		6A98BDDC25D376820074F7D5 /* AboutUs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A98BDDB25D376820074F7D5 /* AboutUs.swift */; };
+		6AAFCEC626331A1F004FBDBF /* PendingCenters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AAFCEC526331A1F004FBDBF /* PendingCenters.swift */; };
+		6AAFCECB26335C35004FBDBF /* PatchCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AAFCECA26335C35004FBDBF /* PatchCenter.swift */; };
 		6AB4D83725C32C3800BE6E46 /* UserRegister.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AB4D83625C32C3800BE6E46 /* UserRegister.swift */; };
 		6AB55BDE2603E16F00799BAF /* UserDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AB55BDD2603E16F00799BAF /* UserDataModel.swift */; };
 		6AB55BE12603E3B600799BAF /* CenterUserRequests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AB55BE02603E3B600799BAF /* CenterUserRequests.swift */; };
@@ -34,6 +37,8 @@
 		6ACE3FAF25C0EC7700F58152 /* CenterList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ACE3FAE25C0EC7700F58152 /* CenterList.swift */; };
 		6AD2E39825CEF5D200DC55E9 /* Home.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AD2E39725CEF5D200DC55E9 /* Home.swift */; };
 		6AD8B01C25EC0287006838C4 /* GlobalAdminHome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AD8B01B25EC0287006838C4 /* GlobalAdminHome.swift */; };
+		6AE8623E2629E75B002AEE7B /* CenterAdminHome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AE8623D2629E75B002AEE7B /* CenterAdminHome.swift */; };
+		6AE862412629EBD0002AEE7B /* PendingPatchCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AE862402629EBD0002AEE7B /* PendingPatchCenter.swift */; };
 		6AF2858E25D5950F00C3DDA0 /* ViewRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AF2858D25D5950F00C3DDA0 /* ViewRouter.swift */; };
 		6AF517142601993B00DFE24A /* NewCenterUserForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AF517132601993B00DFE24A /* NewCenterUserForm.swift */; };
 /* End PBXBuildFile section */
@@ -57,9 +62,12 @@
 		6A6EADA525D47B3500C9A8A5 /* TabbedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabbedView.swift; sourceTree = "<group>"; };
 		6A8339A425EF54540055546B /* UserRequests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRequests.swift; sourceTree = "<group>"; };
 		6A85E5B725E01852009AA0F3 /* CenterDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CenterDataModel.swift; sourceTree = "<group>"; };
+		6A90B690263523CD00C092DB /* Help.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Help.swift; sourceTree = "<group>"; };
 		6A98BDD425D376610074F7D5 /* Loyalty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Loyalty.swift; sourceTree = "<group>"; };
 		6A98BDD725D376700074F7D5 /* Coupons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coupons.swift; sourceTree = "<group>"; };
 		6A98BDDB25D376820074F7D5 /* AboutUs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutUs.swift; sourceTree = "<group>"; };
+		6AAFCEC526331A1F004FBDBF /* PendingCenters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PendingCenters.swift; sourceTree = "<group>"; };
+		6AAFCECA26335C35004FBDBF /* PatchCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatchCenter.swift; sourceTree = "<group>"; };
 		6AB4D83625C32C3800BE6E46 /* UserRegister.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRegister.swift; sourceTree = "<group>"; };
 		6AB55BDD2603E16F00799BAF /* UserDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDataModel.swift; sourceTree = "<group>"; };
 		6AB55BE02603E3B600799BAF /* CenterUserRequests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CenterUserRequests.swift; sourceTree = "<group>"; };
@@ -67,6 +75,8 @@
 		6ACE3FAE25C0EC7700F58152 /* CenterList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CenterList.swift; sourceTree = "<group>"; };
 		6AD2E39725CEF5D200DC55E9 /* Home.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Home.swift; sourceTree = "<group>"; };
 		6AD8B01B25EC0287006838C4 /* GlobalAdminHome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalAdminHome.swift; sourceTree = "<group>"; };
+		6AE8623D2629E75B002AEE7B /* CenterAdminHome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CenterAdminHome.swift; sourceTree = "<group>"; };
+		6AE862402629EBD0002AEE7B /* PendingPatchCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PendingPatchCenter.swift; sourceTree = "<group>"; };
 		6AF2858D25D5950F00C3DDA0 /* ViewRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewRouter.swift; sourceTree = "<group>"; };
 		6AF517132601993B00DFE24A /* NewCenterUserForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewCenterUserForm.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -103,6 +113,7 @@
 		6A19F9A325BD4EB2002731DA /* BowlNow */ = {
 			isa = PBXGroup;
 			children = (
+				6AE8623C2629E73C002AEE7B /* CenterAdminViews */,
 				6A769956260659780009E325 /* GlobalAdminViews */,
 				6A769955260658C70009E325 /* UserViews */,
 				6AC7141425BE8C9D00F7484D /* BowlNow.entitlements */,
@@ -110,11 +121,6 @@
 				6A19F9A425BD4EB2002731DA /* AppDelegate.swift */,
 				6A19F9A625BD4EB2002731DA /* SceneDelegate.swift */,
 				6A19F9B225BD4EB3002731DA /* Info.plist */,
-				6A98BDD425D376610074F7D5 /* Loyalty.swift */,
-				6A98BDDB25D376820074F7D5 /* AboutUs.swift */,
-				6A98BDD725D376700074F7D5 /* Coupons.swift */,
-				6A6EADA125D4690D00C9A8A5 /* MyAccount.swift */,
-				6AF2858D25D5950F00C3DDA0 /* ViewRouter.swift */,
 				6A8339A325EF541A0055546B /* Network */,
 				6A85E5B625E01834009AA0F3 /* Model */,
 				6A19F9AA25BD4EB3002731DA /* Assets.xcassets */,
@@ -142,8 +148,14 @@
 				6A19F9BE25BD5336002731DA /* MyCenters.swift */,
 				6ACE3FAE25C0EC7700F58152 /* CenterList.swift */,
 				6AF517132601993B00DFE24A /* NewCenterUserForm.swift */,
+				6AF2858D25D5950F00C3DDA0 /* ViewRouter.swift */,
 				6A6EADA525D47B3500C9A8A5 /* TabbedView.swift */,
 				6AD2E39725CEF5D200DC55E9 /* Home.swift */,
+				6A98BDD425D376610074F7D5 /* Loyalty.swift */,
+				6A98BDD725D376700074F7D5 /* Coupons.swift */,
+				6A98BDDB25D376820074F7D5 /* AboutUs.swift */,
+				6A90B690263523CD00C092DB /* Help.swift */,
+				6A6EADA125D4690D00C9A8A5 /* MyAccount.swift */,
 			);
 			path = UserViews;
 			sourceTree = "<group>";
@@ -152,6 +164,9 @@
 			isa = PBXGroup;
 			children = (
 				6AD8B01B25EC0287006838C4 /* GlobalAdminHome.swift */,
+				6AE862402629EBD0002AEE7B /* PendingPatchCenter.swift */,
+				6AAFCEC526331A1F004FBDBF /* PendingCenters.swift */,
+				6AAFCECA26335C35004FBDBF /* PatchCenter.swift */,
 			);
 			path = GlobalAdminViews;
 			sourceTree = "<group>";
@@ -174,6 +189,14 @@
 				6AB55BDD2603E16F00799BAF /* UserDataModel.swift */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		6AE8623C2629E73C002AEE7B /* CenterAdminViews */ = {
+			isa = PBXGroup;
+			children = (
+				6AE8623D2629E75B002AEE7B /* CenterAdminHome.swift */,
+			);
+			path = CenterAdminViews;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -254,20 +277,24 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6A90B691263523CD00C092DB /* Help.swift in Sources */,
 				6A19F9A525BD4EB2002731DA /* AppDelegate.swift in Sources */,
 				6A98BDDC25D376820074F7D5 /* AboutUs.swift in Sources */,
 				6AB4D83725C32C3800BE6E46 /* UserRegister.swift in Sources */,
 				6AD2E39825CEF5D200DC55E9 /* Home.swift in Sources */,
 				6A8339A525EF54540055546B /* UserRequests.swift in Sources */,
+				6AE862412629EBD0002AEE7B /* PendingPatchCenter.swift in Sources */,
 				6A19F9C425BD535D002731DA /* SignUp.swift in Sources */,
 				6AF517142601993B00DFE24A /* NewCenterUserForm.swift in Sources */,
 				6AB55BE12603E3B600799BAF /* CenterUserRequests.swift in Sources */,
+				6AAFCECB26335C35004FBDBF /* PatchCenter.swift in Sources */,
 				6A85E5B825E01852009AA0F3 /* CenterDataModel.swift in Sources */,
 				6A98BDD525D376610074F7D5 /* Loyalty.swift in Sources */,
 				6A19F9BC25BD530E002731DA /* CenterRegister.swift in Sources */,
 				6A50787625F07CB200F5F7C5 /* GlobalRequests.swift in Sources */,
 				6A6EADA625D47B3500C9A8A5 /* TabbedView.swift in Sources */,
 				6A19F9BF25BD5336002731DA /* MyCenters.swift in Sources */,
+				6AE8623E2629E75B002AEE7B /* CenterAdminHome.swift in Sources */,
 				6AD8B01C25EC0287006838C4 /* GlobalAdminHome.swift in Sources */,
 				6AB55BDE2603E16F00799BAF /* UserDataModel.swift in Sources */,
 				6A98BDD825D376700074F7D5 /* Coupons.swift in Sources */,
@@ -275,6 +302,7 @@
 				6A19F9A725BD4EB2002731DA /* SceneDelegate.swift in Sources */,
 				6AF2858E25D5950F00C3DDA0 /* ViewRouter.swift in Sources */,
 				6A19F9A925BD4EB2002731DA /* Login.swift in Sources */,
+				6AAFCEC626331A1F004FBDBF /* PendingCenters.swift in Sources */,
 				6A50787325F07C9C00F5F7C5 /* AdminRequests.swift in Sources */,
 				6ACE3FAF25C0EC7700F58152 /* CenterList.swift in Sources */,
 				6A3EEEDC25CD0395009D21F3 /* ForgotPassword.swift in Sources */,
@@ -346,7 +374,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -401,7 +429,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -422,7 +450,7 @@
 				DEVELOPMENT_TEAM = HVF4ZB4VMS;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/BowlNow/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -430,7 +458,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.example.BowlNow;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -445,7 +473,7 @@
 				DEVELOPMENT_TEAM = HVF4ZB4VMS;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/BowlNow/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -453,7 +481,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.example.BowlNow;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
