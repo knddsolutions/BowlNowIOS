@@ -95,9 +95,10 @@ struct CenterAccountInfo: View {
                     .fixedSize(horizontal: false, vertical: true)
                     .foregroundColor(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
             }
-            Text("A user account is intended for all levels of bowlers who desire to visit and join loyalty programs at a nearby bowling center.")
+            Text("This form is for bowling centers ONLY who wish to join our program. Please signup with your centers information to give your customers access to loyalty, coupons and other exciting programs!")
                 .frame(maxWidth:.infinity, alignment: .leading)
-                .font(.subheadline).padding(.horizontal)
+                .font(.subheadline)
+                .padding(.horizontal)
                 .fixedSize(horizontal: false, vertical: true)
                 .foregroundColor(.black)
             Text("Please fill out our form below:")
