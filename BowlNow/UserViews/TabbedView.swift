@@ -10,6 +10,7 @@ import CoreImage.CIFilterBuiltins
 
 struct TabbedView: View {
     @ObservedObject var viewRouter: ViewRouter
+    @Binding var rootIsActive:Bool
     @State var showQR = false
     var body: some View {
         GeometryReader { geometry in
@@ -18,18 +19,18 @@ struct TabbedView: View {
                 VStack {
                     switch viewRouter.currentPage {
                      case .home:
-                        Home()
+                        Home(rootIsActive: self.$rootIsActive)
                      case .loyalty:
-                         Loyalty()
+                        Loyalty()
                      case .coupons:
-                         Coupons()
+                        Coupons()
                      case .account:
-                         MyAccount()
+                        Help()
                     }
                     Spacer()
                     ZStack {
                         HStack {
-                            TabBarIcon(viewRouter: viewRouter, assignedPage: .home,width: geometry.size.width/5, height: geometry.size.height/20, systemIconName: "homekit", tabName: "Home")
+                            TabBarIcon(viewRouter: viewRouter, assignedPage: .home,width: geometry.size.width/5, height: geometry.size.height/20, systemIconName: "house.fill", tabName: "Home")
                             TabBarIcon(viewRouter: viewRouter, assignedPage: .loyalty,width: geometry.size.width/5, height: geometry.size.height/20, systemIconName: "crown.fill", tabName: "Loyalty")
                             ZStack {
                                  Circle()
@@ -40,28 +41,27 @@ struct TabbedView: View {
                                     .aspectRatio(contentMode: .fit)
                                     .foregroundColor(Color(.white))
                                     .frame(width: geometry.size.width/8 , height: geometry.size.width/8)
-                                    .rotationEffect(Angle(degrees: showQR ? 90 : 0))
                              }.offset(y: -geometry.size.height/6/3)
                             .onTapGesture {
                                 showQR.toggle()
                             }
                             TabBarIcon(viewRouter: viewRouter, assignedPage: .coupons,width: geometry.size.width/5, height: geometry.size.height/20, systemIconName: "bookmark.circle.fill", tabName: "Coupons")
-                            TabBarIcon(viewRouter: viewRouter, assignedPage: .account,width: geometry.size.width/5, height: geometry.size.height/20, systemIconName: "info.circle", tabName: "About")
-                        }.background(Color(.white).shadow(radius: 5))
-                    }
-                }.navigationBarTitle("", displayMode: .inline).navigationBarItems(trailing: Image("BowlNow_Logo").resizable().scaledToFit().frame(maxWidth: 50)).frame(width: geometry.size.width).edgesIgnoringSafeArea(.all).sheet(isPresented: self.$showQR) {
+                            TabBarIcon(viewRouter: viewRouter, assignedPage: .account,width: geometry.size.width/5, height: geometry.size.height/20, systemIconName: "questionmark.square.fill", tabName: "Help")
+                        }
+                    }.frame(height: geometry.size.height/8)
+                    .background(Color(.white).shadow(radius: 5))
+                }
+                .navigationBarHidden(true)
+                .frame(width: geometry.size.width)
+                .edgesIgnoringSafeArea(.bottom)
+                .sheet(isPresented: self.$showQR) {
                     PlusMenu()
-            }
+                }
             }
         }
     }
 }
 
-struct HomeTwo_Previews: PreviewProvider {
-    static var previews: some View {
-        TabbedView(viewRouter: ViewRouter())
-    }
-}
 
 struct PlusMenu: View {
     let context = CIContext()
