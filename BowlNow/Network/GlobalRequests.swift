@@ -269,6 +269,7 @@ class GlobalRequests {
                         return
                     }
                     else {
+                        print(httpResponse.statusCode)
                         DispatchQueue.main.async {
                             completion(false, "Oh no! Something went wrong on our end... Please try again.", [])
                         }

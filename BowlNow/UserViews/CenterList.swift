@@ -22,24 +22,50 @@ struct CenterList: View {
     @State private var centerMoid: String = ""
     @State private var showingAlert: Bool = false
     @State private var showingUserForm: Bool = false
+    @State private var showingCenterAdmin: Bool = false
     @State var authToken: String = UserDefaults.standard.string(forKey: "AuthToken") ?? ""
+    @Binding var rootIsActive: Bool
     @Binding var ActiveCenters: [CenterObject]
     var body: some View {
         VStack {
             ScrollView {
-                NavigationLink(destination: TabbedView(viewRouter: ViewRouter()), isActive: $showingHome) { EmptyView() }
+                NavigationLink(destination: TabbedView(viewRouter: ViewRouter(), rootIsActive: $rootIsActive), isActive: $showingHome) { EmptyView() }
+                NavigationLink(destination: CenterAdminHome(), isActive: $showingCenterAdmin) { EmptyView() }
                 ForEach(ActiveCenters, id: \.Moid) { center in
                     let url = URL(string: center.BannerURL!)
                     Button(action: {
                         centerUserRequests.GetCenterUser(AuthToken: authToken, CenterMoid: center.Moid) {(success, message, userData) in
                             if success == true {
-                                self.showingHome.toggle()
+                                for user in userData {
+                                    UserDefaults.standard.set(user.FirstName, forKey: "Fname")
+                                    UserDefaults.standard.set(user.LastName, forKey: "Lname")
+                                    UserDefaults.standard.set(user.BirthDate, forKey: "Birthday")
+                                    UserDefaults.standard.set(center.BannerURL, forKey: "BannerURL")
+                                    UserDefaults.standard.set(center.Center, forKey: "CenterName")
+                                }
+                                centerUserRequests.GetLoyaltyPoints(AuthToken: authToken, CenterMoid: center.Moid) {(success, message, userPoints) in
+                                    if success == true {
+                                        for user in userPoints {
+                                            UserDefaults.standard.set(user.Points, forKey: "Points")
+                                            UserDefaults.standard.set(user.CenterUserMoid, forKey: "CenterUserMoid")
+                                            UserDefaults.standard.set(user.CenterMoid, forKey: "CenterMoid")
+                                            self.showingHome.toggle()
+                                        }
+                                    }
+                                    
+                                    else {
+                                        self.title = "Failed To Load Data"
+                                        self.message = message
+                                    }
+                                    
+                                }
                             }
                             else if message == "No User Found" {
                                 self.imageLogo = url!
                                 self.centerMoid = center.Moid
                                 self.showingUserForm.toggle()
                             }
+                            
                             else {
                                 self.message = message
                                 self.showingAlert.toggle()
@@ -77,4 +103,5 @@ struct CenterList: View {
         }
     }
 }
+
 

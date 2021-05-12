@@ -28,11 +28,15 @@ struct Login: View {
     @State private var showModal = false
     @State private var isUserLogged: Bool = false
     @State private var isAdminLogged: Bool = false
+    @State var isActive: Bool = false
     @State var modalView: ModalView?
     @State var message: String = ""
     @State var title: String = ""
+    @State var didLoadData: Bool = false
     @State var ActiveCenters: [CenterObject] = []
     @State private var Moids: [String] = []
+    
+    
     var body: some View {
         NavigationView {
             GeometryReader { geometry in
@@ -48,7 +52,7 @@ struct Login: View {
                         VStack {
                             Logo()
                             NavigationLink(destination: GlobalAdminHome(ActiveCenters: $ActiveCenters), isActive: $isAdminLogged) { EmptyView() }
-                            NavigationLink(destination: MyCenters(ActiveCenters: $ActiveCenters), isActive: $isUserLogged) { EmptyView() }
+                            NavigationLink(destination: MyCenters(ActiveCenters: $ActiveCenters, rootIsActive: self.$isUserLogged), isActive: $isUserLogged) { EmptyView() }
                         VStack {
                             EmailField(email: $email)
                             PasswordField(password: $password)
@@ -78,7 +82,10 @@ struct Login: View {
             }.alert(isPresented: $showingAlert) {
                 Alert(title: Text((title)), message: Text((message)), dismissButton: .default(Text("OK")))
             }.onAppear(perform:  {
-                CheckToken()
+                print(didLoadData)
+                if didLoadData == false {
+                    CheckToken()
+                }
             })
         }
     }
@@ -162,6 +169,7 @@ struct Login: View {
                     Moids.append(center.CenterMoid)
                 }
                 UserDefaults.standard.set(Moids, forKey: "MyCenters")
+                self.didLoadData = true
                 self.isUserLogged.toggle()
             }
             else {
