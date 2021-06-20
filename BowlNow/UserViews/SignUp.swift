@@ -22,13 +22,11 @@ struct SignUp: View {
                         PlatformInfo()
                         VStack {
                             VStack {
-                                Spacer()
                                 NavigationLink(destination: UserRegister(), isActive: $isShowingUser) { EmptyView()}
                                 UserButton(isShowingUser: $isShowingUser)
-                                    .frame(maxWidth: .infinity, maxHeight: geometry.size.height/7, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
+                                    .frame(maxWidth: .infinity, maxHeight: geometry.size.height/7, alignment: .center)
                                     .background(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
                                     .cornerRadius(10)
-                                    .padding(.horizontal)
                                 HStack {
                                     Divider()
                                         .frame(maxWidth:.infinity, maxHeight:2)
@@ -44,10 +42,9 @@ struct SignUp: View {
                                 }
                                 NavigationLink(destination: CenterRegister(), isActive: $isShowingCenter) { EmptyView() }
                                 CenterButton(isShowingCenter: $isShowingCenter)
-                                    .frame(maxWidth: .infinity, maxHeight: geometry.size.height/7, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
+                                    .frame(maxWidth: .infinity, maxHeight: geometry.size.height/7, alignment: .center)
                                     .background(Color(red: 131/255, green: 202/255, blue: 238/255, opacity: 1.0))
                                     .cornerRadius(10)
-                                    .padding([.horizontal, .bottom])
                                 Spacer()
                             }.padding()
                             SwipeDown()
@@ -75,22 +72,24 @@ struct PlatformInfo: View {
                     .fixedSize(horizontal: false, vertical: true)
                     .foregroundColor(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
                 Spacer()
-                Image("OpenBowl_Logo")
+                Image("BowlNow_Logo")
                     .resizable()
                     .scaledToFit()
                     .frame(maxWidth: 50)
                     .padding()
             }
             Text("Our platform creates an opportunity for the bowling community to earn and redeem rewards at their favorite centers. Made for bowlers, by bowlers, our mission is to provide a custom platform of inclusivity, support and feedback!")
+                .bold()
                 .frame(maxWidth:.infinity, alignment: .leading)
                 .padding([.horizontal,.bottom])
-                .font(.subheadline)
                 .foregroundColor(.black)
             Text("Please start by creating an account below: ")
+                .bold()
                 .frame(maxWidth:.infinity, alignment: .leading)
                 .padding([.horizontal,.bottom])
-                .font(.subheadline)
                 .foregroundColor(.black)
+            Divider()
+                .padding(.bottom)
         }
     }
 }

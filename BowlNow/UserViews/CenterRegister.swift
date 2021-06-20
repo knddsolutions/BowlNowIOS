@@ -29,15 +29,18 @@ struct CenterRegister: View {
                             CenterNameField(Center: $Center)
                             CenterEmailField(Email: $Email)
                             CenterBpaaField(MemberID: $MemberID)
-                            Button(action: {
-                                CheckFields()
-                            }){
-                                Text("Create Account").foregroundColor(.white).bold()
-                            }.frame(maxWidth: .infinity, minHeight: 50, maxHeight: 50)
-                            .background(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
-                            .cornerRadius(10)
-                            .padding()
-                        }
+                        }.background(Color.white)
+                        .cornerRadius(10)
+                        .shadow(radius: 5)
+                        .padding()
+                        Button(action: {
+                            CheckFields()
+                        }){
+                            Text("Create Account").foregroundColor(.white).bold()
+                        }.frame(maxWidth: .infinity, minHeight: 50, maxHeight: 50)
+                        .background(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
+                        .cornerRadius(10)
+                        .padding([.horizontal, .bottom])
                     }.background(Color(.white))
                     .cornerRadius(10)
                     .shadow(radius: 10.0)
@@ -96,14 +99,14 @@ struct CenterAccountInfo: View {
                     .foregroundColor(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
             }
             Text("This form is for bowling centers ONLY who wish to join our program. Please signup with your centers information to give your customers access to loyalty, coupons and other exciting programs!")
+                .font(.subheadline).bold()
                 .frame(maxWidth:.infinity, alignment: .leading)
-                .font(.subheadline)
                 .padding(.horizontal)
                 .fixedSize(horizontal: false, vertical: true)
                 .foregroundColor(.black)
             Text("Please fill out our form below:")
+                .font(.subheadline).bold()
                 .frame(maxWidth:.infinity, alignment: .leading)
-                .font(.subheadline)
                 .padding()
                 .foregroundColor(.black)
         }
@@ -124,7 +127,7 @@ struct CenterNameField: View {
         }.background(Color(.white))
         .cornerRadius(10)
         .opacity(0.9)
-        .padding(.horizontal)
+        .padding([.horizontal, .top])
     }
 }
 
@@ -160,7 +163,7 @@ struct CenterBpaaField: View {
         }.background(Color(.white))
         .cornerRadius(10)
         .opacity(0.9)
-        .padding(.horizontal)
+        .padding([.horizontal,.bottom])
     }
 }
 

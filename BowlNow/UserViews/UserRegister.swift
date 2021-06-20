@@ -28,15 +28,18 @@ struct UserRegister: View {
                             UserEmailField(Email: $Email)
                             UserPasswordField(Password: $Password)
                             UserConfirmPasswordField(confirmPassword: $confirmPassword)
-                            Button(action: {
-                               CheckFields()
-                            }){
-                                Text("Create Account").foregroundColor(.white).bold()
-                            }.frame(maxWidth: .infinity, minHeight: 50, maxHeight: 50)
-                            .background(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
-                            .cornerRadius(10)
-                            .padding()
-                        }
+                        }.background(Color.white)
+                        .cornerRadius(10)
+                        .shadow(radius: 5)
+                        .padding()
+                        Button(action: {
+                           CheckFields()
+                        }){
+                            Text("Create Account").foregroundColor(.white).bold()
+                        }.frame(maxWidth: .infinity, minHeight: 50, maxHeight: 50)
+                        .background(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
+                        .cornerRadius(10)
+                        .padding([.horizontal, .bottom])
                     }.background(Color(.white))
                     .cornerRadius(10)
                     .shadow(radius: 10)
@@ -94,15 +97,15 @@ struct UserAccountInfo: View {
                     .padding().fixedSize(horizontal: false, vertical: true)
                     .foregroundColor(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
             }
-            Text("A user account is intended for all levels of bowlers who desire to visit and join loyalty programs at a nearby BowlNow registered bowling center!")
+            Text("A user account is intended for all levels of bowlers who desire to visit and join loyalty programs at a nearby BowlNow registered bowling centers!")
+                .bold()
                 .frame(maxWidth:.infinity, alignment: .leading)
-                .font(.subheadline)
                 .padding(.horizontal)
                 .fixedSize(horizontal: false, vertical: true)
                 .foregroundColor(.black)
             Text("Please fill out our form below:")
+                .bold()
                 .frame(maxWidth:.infinity, alignment: .leading)
-                .font(.subheadline)
                 .padding()
                 .foregroundColor(.black)
         }
@@ -123,7 +126,7 @@ struct UserEmailField: View {
         }.background(Color(.white))
         .cornerRadius(10)
         .opacity(0.9)
-        .padding(.horizontal)
+        .padding([.horizontal,.top])
     }
 }
 
@@ -159,7 +162,7 @@ struct UserConfirmPasswordField: View {
         }.background(Color(.white))
         .cornerRadius(10)
         .opacity(0.9)
-        .padding(.horizontal)
+        .padding([.horizontal, .bottom])
     }
 }
 
