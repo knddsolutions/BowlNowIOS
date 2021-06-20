@@ -71,10 +71,10 @@ struct ResetInfo: View {
             .bold()
             .foregroundColor(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
         Text("Did you forget your password?")
-            .font(.headline)
+            .bold()
             .padding(.bottom)
         Text("Please enter your email address below to recieve an account recovery email.")
-            .font(.headline)
+            .bold()
             .padding(.horizontal)
             .multilineTextAlignment(.center)
     }
