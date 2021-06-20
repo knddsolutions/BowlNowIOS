@@ -16,7 +16,11 @@ enum ModalView {
     case signUp
 }
 
+
 struct Login: View {
+    
+    //Create variables on view creation
+    
     @Environment(\.colorScheme) var colorScheme
     var request = UserRequests()
     var globalRequests = GlobalRequests()
@@ -28,14 +32,17 @@ struct Login: View {
     @State private var showModal = false
     @State private var isUserLogged: Bool = false
     @State private var isAdminLogged: Bool = false
-    @State var isActive: Bool = false
-    @State var modalView: ModalView?
-    @State var message: String = ""
-    @State var title: String = ""
-    @State var didLoadData: Bool = false
-    @State var ActiveCenters: [CenterObject] = []
-    @State private var Moids: [String] = []
+    @State private var isActive: Bool = false
+    @State private var message: String = ""
+    @State private var title: String = ""
+    @State private var didLoadData: Bool = false
+    @State private var counter: Int = 0
+    @State private var ActiveCenters: [CenterObject] = []
+    @State var MyCenterData: [UserObject] = []
+    @State private var TestData: [UserObject] = []
+    @State private var modalView: ModalView?
     
+    //Main View
     
     var body: some View {
         NavigationView {
@@ -52,7 +59,8 @@ struct Login: View {
                         VStack {
                             Logo()
                             NavigationLink(destination: GlobalAdminHome(ActiveCenters: $ActiveCenters), isActive: $isAdminLogged) { EmptyView() }
-                            NavigationLink(destination: MyCenters(ActiveCenters: $ActiveCenters, rootIsActive: self.$isUserLogged), isActive: $isUserLogged) { EmptyView() }
+                            /*NavigationLink(destination: CenterAdminHome(), isActive: $isUserLogged) { EmptyView() }*/
+                            NavigationLink(destination: MyCenters(ActiveCenters: $ActiveCenters, rootIsActive: $isUserLogged), isActive: $isUserLogged) { EmptyView() }
                         VStack {
                             EmailField(email: $email)
                             PasswordField(password: $password)
@@ -90,9 +98,14 @@ struct Login: View {
         }
     }
     
+    //Function for checking auth token
+    
+    /*Check if cache is not empty of authtoken. If not empty make a variable from cached token and send it to authentication request.
+     If auth request = 200 call function to retrieve all active centers while passing user type to function. If request does not = 200
+     display alert in UI for acknowledgement.*/
     
     func CheckToken() {
-        if UserDefaults.standard.string(forKey: "AuthToken") != nil {
+            if UserDefaults.standard.string(forKey: "AuthToken") != nil {
             let AuthToken: String = UserDefaults.standard.string(forKey: "AuthToken") ?? ""
             request.VerifyAuth(authToken: AuthToken) {(success, message) in
                 if success == true && message == "User" {
@@ -109,6 +122,12 @@ struct Login: View {
             }
         }
     }
+    
+    //Function for checking if Ui fields are empty
+    
+    //Used only when user is not autologged from cached auth token
+    /*If empty display alert for UI acknowledgment. If all fields are not empty check if "remember me" box is checked and
+     cache the field values. Finally perform a standard login request.*/
     
     func CheckFields() {
         if (self.email.count == 0) {
@@ -127,6 +146,19 @@ struct Login: View {
         }
     }
     
+    //function for saving email and password if remember me is checked
+
+    func SaveData(email: String, password: String) {
+        UserDefaults.standard.set(email, forKey: "storeEmail")
+        UserDefaults.standard.set(password, forKey: "storePassword")
+    }
+    
+    //Function for calling login request
+    
+    /*Only used when not being auto logged in by existed cached auth token. Send inputted email and password for verification.
+     If auth request = 200 call function to retrieve all active centers while passing user type to function. If request does not = 200
+     display alert in UI for acknowledgement.*/
+    
     func Login() {
         request.LoginRequest(email: self.email, password: self.password) {(success, message) in
             if success == true && message == "User" {
@@ -142,6 +174,12 @@ struct Login: View {
             }
         }
     }
+    
+    //Function for calling get active centers request
+    
+    /*Takes in user type of user or admin. If request to get active centers = 200, user type will determine next called function.
+     If regular user type store active centers "pending data" in array and use cached authtoken to retrieve all center user objects. If
+     admin type store active centers in array the same way and simply show global admin view. If request does not = 200 display alert in UI for acknowledgement.*/
     
     func GetActiveCenters(Type: String) {
         globalRequests.ActiveCentersList() {(success, message, pendingData) in
@@ -162,15 +200,53 @@ struct Login: View {
         }
     }
     
+    //Function used for getting all center user objects for general user
+    
+    /*Use current authtoken to retrieve objects. If success loop through all user objects in array calling a request
+     to retrieve corresponding points collection for each. Then insert integer point value into user object for each center user
+     and append array "MyCenterData" with now updated user objects. Once variable counter = the number of user objects retrieved and updated,
+     then we can store the filled MyCenterData in cache after encoding. This array contains all user data for each bowling center they have
+     a loyalty program with. After caching set loading variable to complete(true) and move to the my centers view. If any request fails
+     here display alert in UI for acknowledgement. */
+    
     func GetCenterUsers(AuthToken: String) {
         centerUserRequests.GetCenterUser(AuthToken: AuthToken, CenterMoid: "") {(success, message, userData) in
             if success == true {
-                for center in userData {
-                    Moids.append(center.CenterMoid)
+                for var user in userData {
+                    centerUserRequests.GetLoyaltyPoints(AuthToken: AuthToken, CenterMoid: user.CenterMoid) {(success, message, userPoints) in
+                        if success == true {
+                            for data in userPoints {
+                                user.Points = data.Points
+                                let newUserObject = user
+                                MyCenterData.append(newUserObject)
+                                do {
+                                    // Create JSON Encoder
+                                    let encoder = JSONEncoder()
+
+                                    // Encode Note
+                                    let data = try encoder.encode(MyCenterData)
+                                    print("Stored my centers")
+
+                                    // Write/Set Data
+                                    UserDefaults.standard.set(data, forKey: "MyCenters")
+
+                                } catch {
+                                    print("Unable to Encode Array of Notes (\(error))")
+                                }
+                                counter+=1
+                                if counter == userData.count {
+                                    self.didLoadData = true
+                                    self.isUserLogged.toggle()
+                                }
+                            }
+                        }
+                        else {
+                            self.title = "Failed To Load User Points"
+                            self.message = message
+                            self.showingAlert.toggle()
+                        }
+                    }
                 }
-                UserDefaults.standard.set(Moids, forKey: "MyCenters")
-                self.didLoadData = true
-                self.isUserLogged.toggle()
             }
             else {
                 self.title = "Failed To Load User Data"
@@ -181,6 +257,8 @@ struct Login: View {
     }
 }
 
+//View for bowl now logo
+
 struct Logo: View {
     var body: some View {
         Image("BowlNow_Logo")
@@ -190,6 +268,8 @@ struct Logo: View {
         Spacer()
     }
 }
+
+//Text field for email input
 
 struct EmailField: View {
     @Binding var email: String
@@ -209,12 +289,14 @@ struct EmailField: View {
     }
 }
 
+//Text field for password input
+
 struct PasswordField: View {
     @Binding var password: String
     var body: some View {
         VStack {
             HStack {
-                Image("Bowl_now_pin").resizable().scaledToFit().frame(maxWidth: 10, maxHeight: 30, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
+                Image("Bowl_now_pin").resizable().scaledToFit().frame(maxWidth: 10, maxHeight: 30, alignment: .center)
                     .padding(.leading)
                 TextField("Enter your password", text: $password)
                     .foregroundColor(.black)
@@ -227,6 +309,9 @@ struct PasswordField: View {
     }
 }
 
+//View for remember me check box
+//Toggle checkbox calls function
+
 struct ToggleButton: View {
     @Binding var remember: Bool
     var body: some View {
@@ -236,6 +321,24 @@ struct ToggleButton: View {
         .padding([.leading,.bottom])
     }
 }
+
+//View and function for toggling check box on click
+
+struct CheckboxToggleStyle: ToggleStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        return HStack {
+            configuration.label
+            Image(systemName: configuration.isOn ? "checkmark.square" : "square")
+                .resizable()
+                .frame(width: 22, height: 22)
+                .foregroundColor(.gray)
+                .onTapGesture { configuration.isOn.toggle() }
+        }
+    }
+}
+
+//View for facebook and apple sign-ins
+//TODO
 
 struct FacebookAppleButtons: View {
     var body: some View {
@@ -262,6 +365,9 @@ struct FacebookAppleButtons: View {
         }
     }
 }
+
+//View for sign-up, forgot password and privacy buttons
+//Bottom of UI
 
 struct BottomButtons: View {
     @State private var showingSignUp = false
@@ -304,13 +410,7 @@ struct BottomButtons: View {
     }
 }
 
-
-
-//TODO CHECK IF FACEBOOK USER IS ALREADY LOGGED IN
-func SaveData(email: String, password: String) {
-    UserDefaults.standard.set(email, forKey: "storeEmail")
-    UserDefaults.standard.set(password, forKey: "storePassword")
-}
+//Function for making Facebook button
 
 struct FacebookButton: UIViewRepresentable {
     
@@ -324,18 +424,7 @@ struct FacebookButton: UIViewRepresentable {
     }
 }
 
-struct CheckboxToggleStyle: ToggleStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        return HStack {
-            configuration.label
-            Image(systemName: configuration.isOn ? "checkmark.square" : "square")
-                .resizable()
-                .frame(width: 22, height: 22)
-                .foregroundColor(.gray)
-                .onTapGesture { configuration.isOn.toggle() }
-        }
-    }
-}
+//View used to indicate swipe down arrow for closing sheet views
 
 struct SwipeDown: View {
     var body: some View {
