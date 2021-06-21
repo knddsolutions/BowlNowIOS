@@ -71,10 +71,8 @@ struct ResetInfo: View {
             .bold()
             .foregroundColor(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
         Text("Did you forget your password?")
-            .bold()
             .padding(.bottom)
         Text("Please enter your email address below to recieve an account recovery email.")
-            .bold()
             .padding(.horizontal)
             .multilineTextAlignment(.center)
     }
@@ -84,9 +82,15 @@ struct ResetPasswordField: View {
     @Binding var Email: String
     var body: some View {
         VStack {
-            TextField("Enter your email", text: $Email)
-                .foregroundColor(.black)
-                .padding()
+            HStack {
+                Image("Bowl_now_pin").resizable()
+                    .scaledToFit()
+                    .frame(maxWidth: 10, maxHeight: 30, alignment: .center)
+                    .padding(.leading)
+                TextField("Enter your email", text: $Email)
+                    .foregroundColor(.black)
+                    .padding()
+            }
         }.background(Color.white)
         .cornerRadius(10)
         .shadow(radius: 5)
