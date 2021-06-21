@@ -8,19 +8,23 @@
 import Foundation
 import SwiftUI
 
+//Decode user type
 struct AuthSuccess: Decodable {
     let `Type`: String
 }
 
+//Decode returned authtoken and accesslevel
 struct LoginSuccess: Decodable {
     let AuthToken, AccessLevel: String
 }
 
+//Decode array of users
 struct UserResults: Decodable {
     var Results: [UserObject]
 }
 
-struct UserObject: Decodable, Hashable{
+//Decode each user object in array
+struct UserObject: Decodable, Hashable, Encodable{
     let FirstName: String
     let LastName: String
     let CenterMoid: String
@@ -28,19 +32,18 @@ struct UserObject: Decodable, Hashable{
     let `Type`: String
     let IamUserMoid: String
     let Moid: String
+    var Points: Int?
 }
 
+//Decode array of user points
 struct UserPoints: Decodable {
     var Results: [UserPointsObject]
 }
 
+//Decode each user points object in array
 struct UserPointsObject: Decodable, Hashable {
     let Points: Int
     let CenterUserMoid: String
     let CenterMoid: String
     let Moid: String
-}
-
-struct resetResponse: Decodable {
-    let Results: String
 }
