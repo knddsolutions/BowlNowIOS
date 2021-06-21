@@ -29,10 +29,7 @@ struct CenterRegister: View {
                             CenterNameField(Center: $Center)
                             CenterEmailField(Email: $Email)
                             CenterBpaaField(MemberID: $MemberID)
-                        }.background(Color.white)
-                        .cornerRadius(10)
-                        .shadow(radius: 5)
-                        .padding()
+                        }
                         Button(action: {
                             CheckFields()
                         }){
@@ -56,7 +53,10 @@ struct CenterRegister: View {
                                         .scaledToFit()
                                         .frame(maxWidth: 50)
                                         .padding(.top))
-            }.alert(isPresented: $showingAlert) {
+            }
+            .navigationBarTitle("",displayMode: .inline)
+            .navigationBarHidden(true)
+            .alert(isPresented: $showingAlert) {
                 Alert(title: Text((title)), message: Text((message)), dismissButton: .default(Text("OK")))
             }
         }
@@ -92,22 +92,23 @@ struct CenterAccountInfo: View {
         VStack {
             HStack {
                 Text("Center Accounts")
-                    .font(.largeTitle).bold()
+                    .font(.largeTitle)
+                    .bold()
                     .frame(maxWidth:.infinity, alignment: .leading)
                     .padding()
                     .fixedSize(horizontal: false, vertical: true)
                     .foregroundColor(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
             }
             Text("This form is for bowling centers ONLY who wish to join our program. Please signup with your centers information to give your customers access to loyalty, coupons and other exciting programs!")
-                .font(.subheadline).bold()
+                .font(.subheadline)
                 .frame(maxWidth:.infinity, alignment: .leading)
                 .padding(.horizontal)
                 .fixedSize(horizontal: false, vertical: true)
                 .foregroundColor(.black)
             Text("Please fill out our form below:")
-                .font(.subheadline).bold()
+                .font(.subheadline)
                 .frame(maxWidth:.infinity, alignment: .leading)
-                .padding()
+                .padding([.horizontal,.top])
                 .foregroundColor(.black)
         }
     }

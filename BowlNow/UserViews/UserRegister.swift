@@ -28,10 +28,7 @@ struct UserRegister: View {
                             UserEmailField(Email: $Email)
                             UserPasswordField(Password: $Password)
                             UserConfirmPasswordField(confirmPassword: $confirmPassword)
-                        }.background(Color.white)
-                        .cornerRadius(10)
-                        .shadow(radius: 5)
-                        .padding()
+                        }
                         Button(action: {
                            CheckFields()
                         }){
@@ -39,7 +36,7 @@ struct UserRegister: View {
                         }.frame(maxWidth: .infinity, minHeight: 50, maxHeight: 50)
                         .background(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
                         .cornerRadius(10)
-                        .padding([.horizontal, .bottom])
+                        .padding([.horizontal,.bottom])
                     }.background(Color(.white))
                     .cornerRadius(10)
                     .shadow(radius: 10)
@@ -56,7 +53,9 @@ struct UserRegister: View {
                                 .resizable()
                                 .aspectRatio(geometry.size, contentMode: .fill)
                                 .edgesIgnoringSafeArea(.all).opacity(0.1))
-                }.alert(isPresented: $showingAlert) {
+            }.navigationBarTitle("",displayMode: .inline)
+            .navigationBarHidden(true)
+            .alert(isPresented: $showingAlert) {
                     Alert(title: Text((title)), message: Text((message)), dismissButton: .default(Text("OK")))
             }
         }
@@ -92,21 +91,22 @@ struct UserAccountInfo: View {
         VStack {
             HStack {
                 Text("User Accounts")
-                    .font(.largeTitle).bold()
+                    .font(.largeTitle)
+                    .bold()
                     .frame(maxWidth:.infinity, alignment: .leading)
                     .padding().fixedSize(horizontal: false, vertical: true)
                     .foregroundColor(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
             }
-            Text("A user account is intended for all levels of bowlers who desire to visit and join loyalty programs at a nearby BowlNow registered bowling centers!")
-                .bold()
+            Text("A user account is intended for all levels of bowlers who desire to visit and join loyalty programs at a nearby BowlNow registered bowling center!")
+                .font(.subheadline)
                 .frame(maxWidth:.infinity, alignment: .leading)
                 .padding(.horizontal)
                 .fixedSize(horizontal: false, vertical: true)
                 .foregroundColor(.black)
             Text("Please fill out our form below:")
-                .bold()
+                .font(.subheadline)
                 .frame(maxWidth:.infinity, alignment: .leading)
-                .padding()
+                .padding([.horizontal,.top])
                 .foregroundColor(.black)
         }
     }
@@ -162,7 +162,7 @@ struct UserConfirmPasswordField: View {
         }.background(Color(.white))
         .cornerRadius(10)
         .opacity(0.9)
-        .padding([.horizontal, .bottom])
+        .padding([.horizontal,.bottom])
     }
 }
 

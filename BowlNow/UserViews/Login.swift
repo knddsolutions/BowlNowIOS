@@ -374,13 +374,12 @@ struct BottomButtons: View {
     @State private var showingForgotPassword = false
     var body: some View {
         Spacer()
+        NavigationLink(destination: SignUp(), isActive: $showingSignUp) { EmptyView()}
         HStack {
             Button(action: {
                 self.showingSignUp = true
             }){
                 Text("Sign Up").foregroundColor(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
-            }.sheet(isPresented: self.$showingSignUp) {
-                SignUp()
             }
             Spacer()
             Divider()
