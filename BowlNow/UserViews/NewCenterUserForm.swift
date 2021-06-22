@@ -44,17 +44,26 @@ struct NewCenterUserForm: View {
                         .resizable()
                         .scaledToFit()
                         .padding(.top)
-                    Text("New User Info Required").font(.title).bold().foregroundColor(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
-                    Text("Please enter your information below to signup as a loyalty member and get exclusive bowling rewards!").padding().multilineTextAlignment(.center)
                     VStack {
+                        Text("New User Info Required")
+                            .font(.title2)
+                            .bold()
+                            .frame(maxWidth:.infinity, alignment: .leading)
+                            .padding().fixedSize(horizontal: false, vertical: true)
+                            .foregroundColor(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
+                        Text("Uh oh...you are not a current user for this center. Please enter your information below to signup as a loyalty member and get exclusive bowling rewards!")
+                            .frame(maxWidth:.infinity, alignment: .leading)
+                            .font(.subheadline)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .padding(.horizontal)
                         VStack {
-                            TextField("First name", text: $firstName).foregroundColor(.black).padding([.top,.horizontal])
-                            Divider().padding(.horizontal)
-                            TextField("Last name", text: $lastName).foregroundColor(.black).padding([.top,.horizontal])
-                            Divider().padding(.horizontal)
-                            TextField("Date of birth", text: $birthDate).foregroundColor(.black).padding([.top,.horizontal])
-                            Divider().padding([.bottom,.horizontal])
-                        }.background(Color.white).cornerRadius(10).shadow(radius: 5).padding()
+                            FirstNameField(firstName: $firstName)
+                            LastNameField(lastName: $lastName)
+                            BirthDateField(birthDate: $birthDate)
+                        }.background(Color.white)
+                        .cornerRadius(10)
+                        .shadow(radius: 5)
+                        .padding()
                         Button(action: {
                             centerUserRequests.CreateCenterUser(fname: self.firstName, lname: self.lastName, dob: birthDate, centerMoid: centerMoid, AuthToken: authToken) {(success, message, userData) in
                                 if success == true {
@@ -76,7 +85,10 @@ struct NewCenterUserForm: View {
                         .background(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
                         .cornerRadius(10)
                         .padding([.horizontal,.bottom])
-                    }.background(Color.white).cornerRadius(10).shadow(radius: 5).padding()
+                    }.background(Color.white)
+                    .cornerRadius(10)
+                    .shadow(radius: 5)
+                    .padding()
                     Spacer()
                     SwipeDown()
                 }.background(Image("retro_background").resizable()
@@ -87,6 +99,73 @@ struct NewCenterUserForm: View {
                 
             }
         }
+    }
+}
+
+struct FirstNameField: View {
+    @Binding var firstName: String
+    var body: some View {
+        HStack {
+            Image(systemName: "person")
+                .padding()
+                .foregroundColor(.black)
+            VStack{
+                TextField("First name", text: $firstName)
+                    .foregroundColor(.black)
+                    .padding(.top)
+                    .padding(.trailing)
+                Divider()
+                    .padding(.trailing)
+            }
+        }.background(Color(.white))
+        .cornerRadius(10)
+        .opacity(0.9)
+        .padding([.horizontal,.top])
+    }
+}
+
+struct LastNameField: View {
+    @Binding var lastName: String
+    var body: some View {
+        HStack {
+            Image(systemName: "person")
+                .padding()
+                .foregroundColor(.black)
+            VStack{
+                TextField("Last name", text: $lastName)
+                    .foregroundColor(.black)
+                    .padding(.top)
+                    .padding(.trailing)
+                Divider()
+                    .padding(.trailing)
+            }
+        }.background(Color(.white))
+        .cornerRadius(10)
+        .opacity(0.9)
+        .padding(.horizontal)
+    }
+}
+
+struct BirthDateField: View {
+    @Binding var birthDate: String
+    var body: some View {
+        HStack {
+            Image(systemName: "person")
+                .padding()
+                .foregroundColor(.black)
+            VStack{
+                TextField("Date of birth", text: $birthDate)
+                    .foregroundColor(.black)
+                    .padding(.top)
+                    .padding(.trailing)
+                Divider()
+                    .padding(.bottom)
+                    .padding(.trailing)
+            }
+        }.background(Color(.white))
+        .cornerRadius(10)
+        .opacity(0.9)
+        .padding([.horizontal,.bottom])
     }
 }
 
