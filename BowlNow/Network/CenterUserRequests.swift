@@ -31,9 +31,12 @@ class CenterUserRequests {
             
             if let httpResponse = response as? HTTPURLResponse{
                 if httpResponse.statusCode == 200{
-                    guard let data = data else {return}
+                    guard let data = data else {
+                        completion(false, "Bad JSON...Please try again!", [])
+                        return
+                    }
                     guard let finalData = try? JSONDecoder().decode(UserResults.self, from: data) else {
-                        completion(false, "Json response is corrupt...Please try again!", [])
+                        completion(false, "Could not decode JSON...Please try again!", [])
                         return
                     }
                     DispatchQueue.main.async {
@@ -42,19 +45,20 @@ class CenterUserRequests {
                     }
                 }
                 else if httpResponse.statusCode == 400{
-                    guard let data = data else {return}
+                    guard let data = data else {
+                        completion(false, "Bad JSON...Please try again!", [])
+                        return
+                    }
                     guard let finalData = try? JSONDecoder().decode(ApiResponse.self, from: data) else {
-                        completion(false, "Json response is corrupt...Please try again!", [])
+                        completion(false, "Could not decode JSON...Please try again!", [])
                         return
                     }
                     DispatchQueue.main.async {
-                        print(httpResponse.statusCode)
                         completion(false, finalData.Results, [])
                         }
                     return
                 }
                 else if httpResponse.statusCode == 403{
-                    print(httpResponse.statusCode)
                     DispatchQueue.main.async {
                         completion(false, "No User Found", [])
                         }
@@ -79,7 +83,7 @@ class CenterUserRequests {
         let body: [String: String] = ["FirstName": fname, "LastName": lname, "BirthDate": dob, "CenterMoid": centerMoid]
         
         guard let finalbody = try? JSONSerialization.data(withJSONObject: body) else {
-            completion(false, "Json body is corrupt...Please try again!", [])
+            completion(false, "Could not create JSON body...Please try again!", [])
             return
         }
         
@@ -93,10 +97,13 @@ class CenterUserRequests {
                   
             if let httpResponse = response as? HTTPURLResponse{
                 if httpResponse.statusCode == 200{
-                    guard let data = data else {return}
+                    guard let data = data else {
+                        completion(false, "Bad JSON...Please try again!", [])
+                        return
+                    }
                     guard let finalData = try? JSONDecoder().decode(ApiResponse.self, from: data) else {
                         DispatchQueue.main.async {
-                            completion(false, "Json response is corrupt...Please try again!", [])
+                            completion(false, "Could not decode JSON...Please try again!", [])
                         }
                         return
                     }
@@ -106,10 +113,13 @@ class CenterUserRequests {
                     return
                 }
                 else if httpResponse.statusCode == 400{
-                    guard let data = data else {return}
+                    guard let data = data else {
+                        completion(false, "Bad JSON...Please try again!", [])
+                        return
+                    }
                     guard let finalData = try? JSONDecoder().decode(ApiResponse.self, from: data) else {
                         DispatchQueue.main.async {
-                            completion(false, "Json response is corrupt...Please try again!", [])
+                            completion(false, "Could not decode JSON...Please try again!", [])
                         }
                         return
                     }
@@ -141,12 +151,14 @@ class CenterUserRequests {
         request.setValue(AuthToken, forHTTPHeaderField: "X-Auth-Token")
         
         URLSession.shared.dataTask(with: request) {(data, response, error) in
-            
             if let httpResponse = response as? HTTPURLResponse{
                 if httpResponse.statusCode == 200 {
-                    guard let data = data else {return}
+                    guard let data = data else {
+                        completion(false, "Bad JSON...Please try again!", [])
+                        return
+                    }
                     guard let finalData = try? JSONDecoder().decode(UserPoints.self, from: data) else {
-                        completion(false, "Json response is corrupt...Please try again!", [])
+                        completion(false, "Could not decode JSON...Please try again!", [])
                         return
                     }
                     DispatchQueue.main.async {
@@ -155,9 +167,12 @@ class CenterUserRequests {
                     }
                 }
                 else if httpResponse.statusCode == 400 {
-                    guard let data = data else {return}
+                    guard let data = data else {
+                        completion(false, "Bad JSON...Please try again!", [])
+                        return
+                    }
                     guard let finalData = try? JSONDecoder().decode(ApiResponse.self, from: data) else {
-                        completion(false, "Json response is corrupt...Please try again!", [])
+                        completion(false, "Could not decode JSON...Please try again!", [])
                         return
                     }
                     DispatchQueue.main.async {

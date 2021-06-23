@@ -7,8 +7,6 @@
 
 import Foundation
 import SwiftUI
-import UIKit
-import Combine
 
 class GlobalRequests {
     typealias completion = ((_ success: Bool, _ message: String, _ pendingCenters: [CenterObject]) -> Void)
@@ -28,9 +26,12 @@ class GlobalRequests {
             
             if let httpResponse = response as? HTTPURLResponse{
                 if httpResponse.statusCode == 200{
-                    guard let data = data else {return}
+                    guard let data = data else {
+                        completion(false, "Bad JSON...Please try again!", [])
+                        return
+                    }
                     guard let finalData = try? JSONDecoder().decode(CentersList.self, from: data) else {
-                        completion(false, "Json response is corrupt...Please try again!", [])
+                        completion(false, "Could not decode JSON...Please try again!", [])
                         return
                     }
                     DispatchQueue.main.async {
@@ -39,9 +40,12 @@ class GlobalRequests {
                     }
                 }
                 else if httpResponse.statusCode == 400{
-                    guard let data = data else {return}
+                    guard let data = data else {
+                        completion(false, "Bad JSON...Please try again!", [])
+                        return
+                    }
                     guard let finalData = try? JSONDecoder().decode(ApiResponse.self, from: data) else {
-                        completion(false, "Json response is corrupt...Please try again!", [])
+                        completion(false, "Could not decode JSON...Please try again!", [])
                         return
                     }
                     DispatchQueue.main.async {
@@ -50,7 +54,6 @@ class GlobalRequests {
                     return
                 }
                 else{
-                    print(httpResponse.statusCode)
                     DispatchQueue.main.async {
                         completion(false, "Oh no! Something went wrong on our end... Please try again.", [])
                         }
@@ -74,9 +77,12 @@ class GlobalRequests {
             
             if let httpResponse = response as? HTTPURLResponse{
                 if httpResponse.statusCode == 200{
-                    guard let data = data else {return}
+                    guard let data = data else {
+                        completion(false, "Bad JSON...Please try again!", [])
+                        return
+                    }
                     guard let finalData = try? JSONDecoder().decode(CentersList.self, from: data) else {
-                        completion(false, "Json response is corrupt...Please try again!", [])
+                        completion(false, "Could not decode JSON...Please try again!", [])
                         return
                     }
                     DispatchQueue.main.async {
@@ -85,9 +91,12 @@ class GlobalRequests {
                     }
                 }
                 else if httpResponse.statusCode == 400{
-                    guard let data = data else {return}
+                    guard let data = data else {
+                        completion(false, "Bad JSON...Please try again!", [])
+                        return
+                    }
                     guard let finalData = try? JSONDecoder().decode(ApiResponse.self, from: data) else {
-                        completion(false, "Json response is corrupt...Please try again!", [])
+                        completion(false, "Could not decode JSON...Please try again!", [])
                         return
                     }
                     DispatchQueue.main.async {
@@ -114,7 +123,7 @@ class GlobalRequests {
         let body: [String: String] = ["Center": center, "Email": email, "MemberID": memberID, "Platform": platform]
         
         guard let finalbody = try? JSONSerialization.data(withJSONObject: body) else {
-            completion(false, "Json body is corrupt...Please try again!", [])
+            completion(false, "Could not create JSON body...Please try again!", [])
             return
         }
         
@@ -127,10 +136,13 @@ class GlobalRequests {
                   
             if let httpResponse = response as? HTTPURLResponse{
                 if httpResponse.statusCode == 200{
-                    guard let data = data else {return}
-                    guard let finalData = try? JSONDecoder().decode(registrationResponse.self, from: data) else {
+                    guard let data = data else {
+                        completion(false, "Bad JSON...Please try again!", [])
+                        return
+                    }
+                    guard let finalData = try? JSONDecoder().decode(ApiResponse.self, from: data) else {
                         DispatchQueue.main.async {
-                            completion(false, "Json response is corrupt... Please try again!", [])
+                            completion(false, "Could not decode JSON...Please try again!", [])
                         }
                         return
                     }
@@ -139,24 +151,27 @@ class GlobalRequests {
                     }
                     return
                 }
-                    else if httpResponse.statusCode == 400{
-                        guard let data = data else {return}
-                        guard let finalData = try? JSONDecoder().decode(registrationResponse.self, from: data) else {
-                            DispatchQueue.main.async {
-                                completion(false, "Json response is corrupt... Please try again!", [])
-                            }
-                            return
-                        }
+                else if httpResponse.statusCode == 400{
+                    guard let data = data else {
+                        completion(false, "Bad JSON...Please try again!", [])
+                        return
+                    }
+                    guard let finalData = try? JSONDecoder().decode(ApiResponse.self, from: data) else {
                         DispatchQueue.main.async {
-                            completion(false, finalData.Results, [])
+                            completion(false, "Could not decode JSON...Please try again!", [])
                         }
                         return
                     }
-                    else {
-                        DispatchQueue.main.async {
-                            completion(false, "Oh no! Something went wrong on our end... Please try again.", [])
-                        }
+                    DispatchQueue.main.async {
+                        completion(false, finalData.Results, [])
                     }
+                    return
+                }
+                else {
+                    DispatchQueue.main.async {
+                        completion(false, "Oh no! Something went wrong on our end... Please try again.", [])
+                    }
+                }
             }
         }.resume()
     }
@@ -170,7 +185,7 @@ class GlobalRequests {
         let body: [String: String] = ["BannerURL": BannerURL]
         
         guard let finalbody = try? JSONSerialization.data(withJSONObject: body) else {
-            completion(false, "Json body is corrupt...Please try again!", [])
+            completion(false, "Could not create JSON body...Please try again!", [])
             return
         }
         
@@ -184,12 +199,13 @@ class GlobalRequests {
                   
             if let httpResponse = response as? HTTPURLResponse{
                 if httpResponse.statusCode == 200{
-                    guard let data = data else {return}
-                    let dataString = String(data: data, encoding: .utf8)
-                    print(dataString)
+                    guard let data = data else {
+                        completion(false, "Bad JSON...Please try again!", [])
+                        return
+                    }
                     guard let finalData = try? JSONDecoder().decode(CenterObject.self, from: data) else {
                         DispatchQueue.main.async {
-                            completion(false, "Json response is corrupt... Please try again!", [])
+                            completion(false, "Could not decode JSON...Please try again!", [])
                         }
                         return
                     }
@@ -198,24 +214,27 @@ class GlobalRequests {
                     }
                     return
                 }
-                    else if httpResponse.statusCode == 400{
-                        guard let data = data else {return}
-                        guard let finalData = try? JSONDecoder().decode(ApiResponse.self, from: data) else {
-                            DispatchQueue.main.async {
-                                completion(false, "Json response is corrupt... Please try again!", [])
-                            }
-                            return
-                        }
+                else if httpResponse.statusCode == 400{
+                    guard let data = data else {
+                        completion(false, "Bad JSON...Please try again!", [])
+                        return
+                    }
+                    guard let finalData = try? JSONDecoder().decode(ApiResponse.self, from: data) else {
                         DispatchQueue.main.async {
-                            completion(false, finalData.Results, [])
+                            completion(false, "Could not decode JSON...Please try again!", [])
                         }
                         return
                     }
-                    else {
-                        DispatchQueue.main.async {
-                            completion(false, "Oh no! Something went wrong on our end... Please try again.", [])
-                        }
+                    DispatchQueue.main.async {
+                        completion(false, finalData.Results, [])
                     }
+                    return
+                }
+                else {
+                    DispatchQueue.main.async {
+                        completion(false, "Oh no! Something went wrong on our end... Please try again.", [])
+                    }
+                }
             }
         }.resume()
     }
@@ -229,7 +248,7 @@ class GlobalRequests {
         let body: [String: String] = [:]
         
         guard let finalbody = try? JSONSerialization.data(withJSONObject: body) else {
-            completion(false, "Json body is corrupt...Please try again!", [])
+            completion(false, "Could not create JSON body...Please try again!", [])
             return
         }
         
@@ -243,10 +262,13 @@ class GlobalRequests {
                   
             if let httpResponse = response as? HTTPURLResponse{
                 if httpResponse.statusCode == 200{
-                    guard let data = data else {return}
+                    guard let data = data else {
+                        completion(false, "Bad JSON...Please try again!", [])
+                        return
+                    }
                     guard let finalData = try? JSONDecoder().decode(ApiResponse.self, from: data) else {
                         DispatchQueue.main.async {
-                            completion(false, "Json response is corrupt... Please try again!", [])
+                            completion(false, "Could not decode JSON...Please try again!", [])
                         }
                         return
                     }
@@ -255,25 +277,27 @@ class GlobalRequests {
                     }
                     return
                 }
-                    else if httpResponse.statusCode == 400{
-                        guard let data = data else {return}
-                        guard let finalData = try? JSONDecoder().decode(ApiResponse.self, from: data) else {
-                            DispatchQueue.main.async {
-                                completion(false, "Json response is corrupt... Please try again!", [])
-                            }
-                            return
-                        }
+                else if httpResponse.statusCode == 400{
+                    guard let data = data else {
+                        completion(false, "Bad JSON...Please try again!", [])
+                        return
+                    }
+                    guard let finalData = try? JSONDecoder().decode(ApiResponse.self, from: data) else {
                         DispatchQueue.main.async {
-                            completion(false, finalData.Results, [])
+                            completion(false, "Could not decode JSON...Please try again!", [])
                         }
                         return
                     }
-                    else {
-                        print(httpResponse.statusCode)
-                        DispatchQueue.main.async {
-                            completion(false, "Oh no! Something went wrong on our end... Please try again.", [])
-                        }
+                    DispatchQueue.main.async {
+                        completion(false, finalData.Results, [])
                     }
+                    return
+                }
+                else {
+                    DispatchQueue.main.async {
+                        completion(false, "Oh no! Something went wrong on our end... Please try again.", [])
+                    }
+                }
             }
         }.resume()
     }
@@ -288,16 +312,18 @@ class GlobalRequests {
         request.httpMethod = "DELETE"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue(AuthToken, forHTTPHeaderField: "X-Auth-Token")
-        print(url)
               
         URLSession.shared.dataTask(with: request) { (data, response, error) in
                   
             if let httpResponse = response as? HTTPURLResponse{
                 if httpResponse.statusCode == 200{
-                    guard let data = data else {return}
+                    guard let data = data else {
+                        completion(false, "Bad JSON...Please try again!", [])
+                        return
+                    }
                     guard let finalData = try? JSONDecoder().decode(ApiResponse.self, from: data) else {
                         DispatchQueue.main.async {
-                            completion(false, "Json response is corrupt... Please try again!", [])
+                            completion(false, "Could not decode JSON...Please try again!", [])
                         }
                         return
                     }
@@ -306,25 +332,27 @@ class GlobalRequests {
                     }
                     return
                 }
-                    else if httpResponse.statusCode == 400{
-                        guard let data = data else {return}
-                        guard let finalData = try? JSONDecoder().decode(ApiResponse.self, from: data) else {
-                            DispatchQueue.main.async {
-                                completion(false, "Json response is corrupt... Please try again!", [])
-                            }
-                            return
-                        }
+                else if httpResponse.statusCode == 400{
+                    guard let data = data else {
+                        completion(false, "Bad JSON...Please try again!", [])
+                        return
+                    }
+                    guard let finalData = try? JSONDecoder().decode(ApiResponse.self, from: data) else {
                         DispatchQueue.main.async {
-                            completion(false, finalData.Results, [])
+                            completion(false, "Could not decode JSON...Please try again!", [])
                         }
                         return
                     }
-                    else {
-                        DispatchQueue.main.async {
-                            print(httpResponse.statusCode)
-                            completion(false, "Oh no! Something went wrong on our end... Please try again.", [])
-                        }
+                    DispatchQueue.main.async {
+                        completion(false, finalData.Results, [])
                     }
+                    return
+                }
+                else {
+                    DispatchQueue.main.async {
+                        completion(false, "Oh no! Something went wrong on our end... Please try again.", [])
+                    }
+                }
             }
         }.resume()
     }
