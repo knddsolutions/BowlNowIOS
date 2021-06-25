@@ -54,8 +54,9 @@ struct CenterList: View {
                                     }
                                     
                                     else {
-                                        self.title = "Failed To Load Data"
+                                        self.title = "Failed To Load User Points"
                                         self.message = message
+                                        self.showingAlert.toggle()
                                     }
                                     
                                 }
@@ -65,7 +66,6 @@ struct CenterList: View {
                                 self.centerMoid = center.Moid
                                 self.showingUserForm.toggle()
                             }
-                            
                             else {
                                 self.message = message
                                 self.showingAlert.toggle()

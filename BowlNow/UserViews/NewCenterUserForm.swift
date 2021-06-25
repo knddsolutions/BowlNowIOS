@@ -15,10 +15,12 @@ struct NewCenterUserForm: View {
     @State private var message: String = ""
     @State private var title: String = ""
     @State private var showingAlert = false
+    @State private var counter: Int = 0
     @State var authToken: String = UserDefaults.standard.string(forKey: "AuthToken") ?? ""
     @State var firstName: String = UserDefaults.standard.string(forKey: "FirstName") ?? ""
     @State var lastName: String = UserDefaults.standard.string(forKey: "LastName") ?? ""
     @State var birthDate: String = UserDefaults.standard.string(forKey: "BirthDate") ?? ""
+    @State var MyCenterData: [UserObject] = []
     var body: some View {
         GeometryReader { geometry in
             ZStack {
@@ -72,9 +74,10 @@ struct NewCenterUserForm: View {
                                     UserDefaults.standard.set(firstName, forKey: "FirstName")
                                     UserDefaults.standard.set(lastName, forKey: "LastName")
                                     UserDefaults.standard.set(birthDate, forKey: "BirthDate")
+                                    GetNewCenterUser()
                                 }
                                 else {
-                                    self.title = "Center User Failed"
+                                    self.title = "New Center User Failed"
                                     self.message = message
                                 }
                                 self.showingAlert.toggle()
@@ -97,6 +100,51 @@ struct NewCenterUserForm: View {
             }.alert(isPresented: $showingAlert) {
                 Alert(title: Text((title)), message: Text((message)), dismissButton: .default(Text("OK")))
                 
+            }
+        }
+    }
+    
+    func GetNewCenterUser() {
+        centerUserRequests.GetCenterUser(AuthToken: authToken, CenterMoid: "") {(success, message, userData) in
+            if success == true {
+                    for var user in userData {
+                        centerUserRequests.GetLoyaltyPoints(AuthToken: authToken, CenterMoid: user.CenterMoid) {(success, message, userPoints) in
+                            if success == true {
+                                for data in userPoints {
+                                    user.Points = data.Points
+                                    let newUserObject = user
+                                    MyCenterData.append(newUserObject)
+                                    do {
+                                        // Create JSON Encoder
+                                        let encoder = JSONEncoder()
+
+                                        // Encode Note
+                                        let data = try encoder.encode(MyCenterData)
+
+                                        // Write/Set Data
+                                        UserDefaults.standard.set(data, forKey: "MyCenters")
+
+                                    } catch {
+                                        print("Unable to Encode Array of Notes (\(error))")
+                                    }
+                                    counter+=1
+                                    if counter == userData.count {
+                                        counter = 0
+                                    }
+                                }
+                            }
+                            else {
+                                self.title = "Failed To Load New User"
+                                self.message = message
+                                self.showingAlert.toggle()
+                            }
+                        }
+                    }
+                }
+            else {
+                self.title = "Failed To Load New User"
+                self.message = message
+                self.showingAlert.toggle()
             }
         }
     }
