@@ -20,10 +20,14 @@ struct Help: View {
                     QuestionView2()
                 }.padding()
                 .background(Color.white)
-            }.background(Image("retro_background")
-                            .resizable()
-                            .aspectRatio(geometry.size, contentMode: .fill)
-                            .edgesIgnoringSafeArea(.all).opacity(0.1))
+            }.navigationBarTitle("", displayMode: .inline)
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    Text("BowlNow Support")
+                        .bold()
+                        .foregroundColor(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
+                }
+            }
         }
     }
 }
@@ -162,6 +166,7 @@ struct LogoView: View {
             .resizable()
             .scaledToFit()
             .frame(maxWidth: 150)
+            .padding(.top)
     }
 }
 

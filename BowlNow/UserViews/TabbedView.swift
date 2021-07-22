@@ -25,7 +25,7 @@ struct TabbedView: View {
                      case .coupons:
                         Coupons()
                      case .account:
-                        Help()
+                        MyAccount(rootIsActive: $rootIsActive)
                     }
                     Spacer()
                     ZStack {
@@ -46,13 +46,11 @@ struct TabbedView: View {
                                 showQR.toggle()
                             }
                             TabBarIcon(viewRouter: viewRouter, assignedPage: .coupons,width: geometry.size.width/5, height: geometry.size.height/20, systemIconName: "bookmark.circle.fill", tabName: "Coupons")
-                            TabBarIcon(viewRouter: viewRouter, assignedPage: .account,width: geometry.size.width/5, height: geometry.size.height/20, systemIconName: "questionmark.square.fill", tabName: "Help")
+                            TabBarIcon(viewRouter: viewRouter, assignedPage: .account,width: geometry.size.width/5, height: geometry.size.height/20, systemIconName: "person.circle.fill", tabName: "Account")
                         }
                     }.frame(height: geometry.size.height/8)
-                    .background(Color(.white).shadow(radius: 5))
-                }
-                .navigationBarHidden(true)
-                .frame(width: geometry.size.width)
+                    .background(Color(red: 0.969, green: 0.969, blue: 0.969).shadow(radius: 2))
+                }.frame(width: geometry.size.width)
                 .edgesIgnoringSafeArea(.bottom)
                 .sheet(isPresented: self.$showQR) {
                     PlusMenu()
@@ -66,11 +64,17 @@ struct TabbedView: View {
 struct PlusMenu: View {
     let context = CIContext()
     let filter = CIFilter.qrCodeGenerator()
+    @State var Fname: String = UserDefaults.standard.string(forKey: "Fname") ?? ""
+    @State var Points: String = UserDefaults.standard.string(forKey: "Points") ?? ""
+    @State var Email: String = UserDefaults.standard.string(forKey: "storeEmail") ?? ""
+    @State var CenterUserID: String = UserDefaults.standard.string(forKey: "CenterUserMoid") ?? ""
+    @State var PointsMoid: String = UserDefaults.standard.string(forKey: "PointsMoid") ?? ""
+    @State var CenterMoid: String  = UserDefaults.standard.string(forKey: "CenterMoid") ?? ""
     var body: some View {
         VStack {
             Spacer()
             Text("Scan this QR code")
-            Image(uiImage: generateQRCode(from: "This is an example"))
+            Image(uiImage: generateQRCode(from: "\(self.CenterUserID)\n\(self.Fname)\n\(self.Email)\n\(self.CenterMoid)\n\(self.Points)\n\(self.PointsMoid)"))
                 .interpolation(.none)
                 .resizable()
                 .scaledToFit()

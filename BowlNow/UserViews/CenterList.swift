@@ -49,6 +49,7 @@ struct CenterList: View {
                                             UserDefaults.standard.set(user.Points, forKey: "Points")
                                             UserDefaults.standard.set(user.CenterUserMoid, forKey: "CenterUserMoid")
                                             UserDefaults.standard.set(user.CenterMoid, forKey: "CenterMoid")
+                                            UserDefaults.standard.set(user.Moid, forKey: "PointsMoid")
                                             self.showingHome.toggle()
                                         }
                                     }
@@ -96,7 +97,14 @@ struct CenterList: View {
                     }
                     Divider()
                 }
-            }.navigationBarTitle("All Centers", displayMode: .inline)
+            }.navigationBarTitle("", displayMode: .inline)
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    Text("All Active Centers")
+                        .bold()
+                        .foregroundColor(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
+                }
+            }
         }.alert(isPresented: $showingAlert) {
             Alert(title: Text((title)), message: Text((message)), dismissButton: .default(Text("OK")))
             

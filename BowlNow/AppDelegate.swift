@@ -10,7 +10,6 @@ import UIKit
 
 // Swift
 // AppDelegate.swift
-import UIKit
 import FBSDKCoreKit
 
 @UIApplicationMain

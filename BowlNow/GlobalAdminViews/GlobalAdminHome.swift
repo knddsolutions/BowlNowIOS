@@ -27,6 +27,7 @@ struct GlobalAdminHome: View {
                     .foregroundColor(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
                 ShowPendingCentersButton()
                 ShowPatchCentersButton(ActiveCenters: $ActiveCenters)
+                ShowEditCentersButton(ActiveCenters: $ActiveCenters)
                 Spacer()
             }.onAppear(perform: {
                 print(ActiveCenters)
@@ -70,3 +71,22 @@ struct ShowPatchCentersButton: View {
         .padding(.horizontal)
     }
 }
+
+struct ShowEditCentersButton: View {
+    @State private var showingEditCenter: Bool = false
+    @Binding var ActiveCenters: [CenterObject]
+    var body: some View {
+        NavigationLink(destination: EditableCenters(ActiveCenters: $ActiveCenters), isActive: $showingEditCenter) { EmptyView() }
+        Button(action: {
+            showingEditCenter.toggle()
+        }) {
+            Text("Edit A Center")
+                .foregroundColor(.white)
+                .bold()
+        }.frame(maxWidth: .infinity, maxHeight: 50)
+        .background(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
+        .cornerRadius(10)
+        .padding()
+    }
+}
+

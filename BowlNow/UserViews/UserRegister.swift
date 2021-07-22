@@ -21,9 +21,26 @@ struct UserRegister: View {
             ZStack {
                 Color.white.edgesIgnoringSafeArea(.all)
                 VStack {
+                    Image("BowlNow_Logo")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(maxWidth: 150)
+                        .padding(.top)
+                    Text("User Account")
+                        .font(.title)
+                        .bold()
+                        .foregroundColor(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
+                    Text("Note: You must have access to the email address you enter below!")
+                        .font(.subheadline)
+                        .multilineTextAlignment(.center)
+                        .foregroundColor(.gray)
+                        .padding(.horizontal)
                     Spacer()
+                    Text("Please fill out our form below:")
+                        .padding([.horizontal,.top])
+                        .frame(maxWidth:.infinity, alignment: .leading)
+                        .fixedSize(horizontal: false, vertical: true)
                     VStack {
-                        UserAccountInfo()
                         VStack {
                             UserEmailField(Email: $Email)
                             UserPasswordField(Password: $Password)
@@ -40,7 +57,7 @@ struct UserRegister: View {
                     }.background(Color(.white))
                     .cornerRadius(10)
                     .shadow(radius: 10)
-                    .padding()
+                    .padding(.horizontal)
                     .navigationBarTitle("User Registration",displayMode: .inline)
                     .navigationBarItems(trailing: Image("BowlNow_Logo")
                                             .resizable()
@@ -82,32 +99,6 @@ struct UserRegister: View {
                 }
                 self.showingAlert.toggle()
             }
-        }
-    }
-}
-
-struct UserAccountInfo: View {
-    var body: some View {
-        VStack {
-            HStack {
-                Text("User Accounts")
-                    .font(.largeTitle)
-                    .bold()
-                    .frame(maxWidth:.infinity, alignment: .leading)
-                    .padding().fixedSize(horizontal: false, vertical: true)
-                    .foregroundColor(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
-            }
-            Text("A user account is intended for all levels of bowlers who desire to visit and join loyalty programs at a nearby BowlNow registered bowling center!")
-                .font(.subheadline)
-                .frame(maxWidth:.infinity, alignment: .leading)
-                .padding(.horizontal)
-                .fixedSize(horizontal: false, vertical: true)
-                .foregroundColor(.black)
-            Text("Please fill out our form below:")
-                .font(.subheadline)
-                .frame(maxWidth:.infinity, alignment: .leading)
-                .padding([.horizontal,.top])
-                .foregroundColor(.black)
         }
     }
 }

@@ -13,12 +13,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UIApplicationDelegate{
 
     var window: UIWindow?
     
-    override init() {
-        UINavigationBar.appearance().barTintColor = .clear
-        UINavigationBar.appearance().backgroundColor = .clear
+    /*override init() {
+        UINavigationBar.appearance().barTintColor = .white
+        UINavigationBar.appearance().backgroundColor = .white
         UINavigationBar.appearance().setBackgroundImage(UIImage(), for: .default)
         UINavigationBar.appearance().shadowImage = UIImage()
-    }
+    }*/
 
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {

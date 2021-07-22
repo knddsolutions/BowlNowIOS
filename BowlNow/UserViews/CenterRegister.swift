@@ -22,9 +22,25 @@ struct CenterRegister: View {
             ZStack {
                 Color.white.edgesIgnoringSafeArea(.all)
                 VStack {
+                    Image("BowlNow_Logo")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(maxWidth: 150)
+                        .padding(.top)
+                    Text("Center Account")
+                        .font(.title)
+                        .bold()
+                        .foregroundColor(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
+                    Text("Note: This will be verified by BowlNow!")
+                        .font(.subheadline)
+                        .multilineTextAlignment(.center)
+                        .foregroundColor(.gray)
                     Spacer()
+                    Text("Please fill out our form below:")
+                        .padding([.horizontal,.top])
+                        .frame(maxWidth:.infinity, alignment: .leading)
+                        .fixedSize(horizontal: false, vertical: true)
                     VStack {
-                        CenterAccountInfo()
                         VStack {
                             CenterNameField(Center: $Center)
                             CenterEmailField(Email: $Email)
@@ -41,18 +57,14 @@ struct CenterRegister: View {
                     }.background(Color(.white))
                     .cornerRadius(10)
                     .shadow(radius: 10.0)
-                    .padding()
+                    .padding(.horizontal)
                     Spacer()
                     SwipeDown()
-                }.background(Image("retro_background").resizable()
-                .aspectRatio(geometry.size, contentMode: .fill)
-                .edgesIgnoringSafeArea(.all).opacity(0.1))
-                .navigationBarTitle("Center Registration", displayMode: .inline)
-                .navigationBarItems(trailing: Image("BowlNow_Logo")
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(maxWidth: 50)
-                                        .padding(.top))
+                }.background(Image("retro_background")
+                                .resizable()
+                                .aspectRatio(geometry.size, contentMode: .fill)
+                                .edgesIgnoringSafeArea(.all).opacity(0.1))
+                .navigationBarTitle("", displayMode: .inline)
             }
             .navigationBarTitle("",displayMode: .inline)
             .navigationBarHidden(true)
@@ -83,33 +95,6 @@ struct CenterRegister: View {
                     self.showingAlert.toggle()
                 }
             }
-        }
-    }
-}
-
-struct CenterAccountInfo: View {
-    var body: some View {
-        VStack {
-            HStack {
-                Text("Center Accounts")
-                    .font(.largeTitle)
-                    .bold()
-                    .frame(maxWidth:.infinity, alignment: .leading)
-                    .padding()
-                    .fixedSize(horizontal: false, vertical: true)
-                    .foregroundColor(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
-            }
-            Text("This form is for bowling centers ONLY who wish to join our program. Please signup with your centers information to give your customers access to loyalty, coupons and other exciting programs!")
-                .font(.subheadline)
-                .frame(maxWidth:.infinity, alignment: .leading)
-                .padding(.horizontal)
-                .fixedSize(horizontal: false, vertical: true)
-                .foregroundColor(.black)
-            Text("Please fill out our form below:")
-                .font(.subheadline)
-                .frame(maxWidth:.infinity, alignment: .leading)
-                .padding([.horizontal,.top])
-                .foregroundColor(.black)
         }
     }
 }

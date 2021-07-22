@@ -11,10 +11,10 @@ import Kingfisher
 import Foundation
 
 
-
-
 struct MyCenters: View {
     @State var isHome: Bool = false
+    @State private var showingCenterAdminHome: Bool = false
+    @State private var showingAllCenters: Bool = false
     @Binding var ActiveCenters: [CenterObject]
     @Binding var rootIsActive: Bool
     @State var MyCenterData: [UserObject] = []
@@ -22,6 +22,8 @@ struct MyCenters: View {
         GeometryReader { geometry in
             VStack{
                 NavigationLink(destination: TabbedView(viewRouter: ViewRouter(), rootIsActive: $rootIsActive), isActive: $isHome) { EmptyView() }
+                NavigationLink(destination: CenterAdminHome(), isActive: $showingCenterAdminHome) { EmptyView() }
+                NavigationLink(destination: CenterList(rootIsActive: $rootIsActive, ActiveCenters: $ActiveCenters), isActive: $showingAllCenters) { EmptyView() }
                 ScrollView {
                     ForEach(ActiveCenters, id: \.Moid) { center in
                         if let index =  MyCenterData.firstIndex(where: {$0.CenterMoid == center.Moid}) {
@@ -41,8 +43,28 @@ struct MyCenters: View {
                                     RoundedRectangle(cornerRadius: 10)
                                         .stroke(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0), style: StrokeStyle(lineWidth: 4.0, lineCap: .round, dash: [20, 10])))
                         }).padding()
+                }.background(Image("retro_background")
+                                .resizable()
+                                .scaledToFill()
+                                .opacity(0.1))
+                .edgesIgnoringSafeArea(.bottom)
+            }.navigationBarTitle("", displayMode: .inline)
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    Text("My Centers")
+                        .bold()
+                        .foregroundColor(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
                 }
-            }.navigationBarTitle("My Centers", displayMode: .inline)
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: {
+                        self.showingAllCenters.toggle()
+                    }) {
+                        Text("+ ADD")
+                            .bold()
+                            .foregroundColor(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
+                    }
+                }
+            }
             .onAppear(perform: {
                 if let data = UserDefaults.standard.data(forKey: "MyCenters") {
                     do {
@@ -73,11 +95,16 @@ struct MyCenters: View {
                 UserDefaults.standard.set(MyCenterData[index].BirthDate, forKey: "Birthday")
                 UserDefaults.standard.set(MyCenterData[index].Points, forKey: "Points")
                 UserDefaults.standard.set(MyCenterData[index].Moid, forKey: "CenterUserMoid")
+                UserDefaults.standard.set(MyCenterData[index].PointsMoid, forKey: "PointsMoid")
                 UserDefaults.standard.set(BowlingCenter.BannerURL, forKey: "BannerURL")
                 UserDefaults.standard.set(BowlingCenter.Center, forKey: "CenterName")
                 UserDefaults.standard.set(BowlingCenter.Moid, forKey: "CenterMoid")
                 //TODO SAVE Points DATA
-                self.isHome.toggle()
+                if MyCenterData[index].Type == "Admin" {
+                    self.showingCenterAdminHome.toggle()
+                } else {
+                    self.isHome.toggle()
+                }
             }) {
                 KFImage(BannerURL)
                     .placeholder {

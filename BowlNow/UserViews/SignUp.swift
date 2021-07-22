@@ -18,10 +18,9 @@ struct SignUp: View {
             ZStack {
                 Color.white.edgesIgnoringSafeArea(.all)
                 VStack {
-                    PlatformInfo()
-                    VStack {
-                        Spacer()
+                    Spacer()
                         VStack {
+                            UserAccountInfo()
                             UserButton(isShowingUser: $isShowingUser)
                                 .frame(maxWidth: .infinity, maxHeight: geometry.size.height/7, alignment: .center)
                                 .background(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
@@ -33,15 +32,17 @@ struct SignUp: View {
                                 Divider()
                                     .frame(maxWidth:.infinity, maxHeight:2)
                                     .background(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
-                                    .padding()
+                                    .padding(.horizontal)
                                 Text("Or")
                                     .font(.subheadline)
                                     .foregroundColor(.black)
                                 Divider()
                                     .frame(maxWidth:.infinity, maxHeight:2)
                                     .background(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
-                                    .padding()
-                            }
+                                    .padding(.horizontal)
+                            }.padding(.top, 20)
+                            .padding(.bottom, 20)
+                            CenterAccountInfo()
                             CenterButton(isShowingCenter: $isShowingCenter)
                                 .frame(maxWidth: .infinity, maxHeight: geometry.size.height/7, alignment: .center)
                                 .background(Color(red: 131/255, green: 202/255, blue: 238/255, opacity: 1.0))
@@ -51,46 +52,58 @@ struct SignUp: View {
                                 }
                         }.padding()
                         Spacer()
-                    }.navigationBarTitle("",displayMode: .inline)
                 }.background(Image("retro_background")
                                 .resizable()
                                 .aspectRatio(geometry.size, contentMode: .fill)
-                                .edgesIgnoringSafeArea(.all).opacity(0.1))
-                
+                                .edgesIgnoringSafeArea(.bottom).opacity(0.1))
+                .navigationBarTitle("",displayMode: .inline)
+                .toolbar {
+                    ToolbarItem(placement: .principal) {
+                        Text("Welcome")
+                            .bold()
+                            .foregroundColor(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
+                    }
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Image("BowlNow_Logo")
+                            .resizable()
+                            .frame(width:30, height: 30)
+                            .scaledToFit()
+                    }
+                }
             }
         }
     }
 }
 
-struct PlatformInfo: View {
+struct UserAccountInfo: View {
     var body: some View {
-        VStack {
-            HStack {
-                Text("Welcome")
-                    .font(.largeTitle)
-                    .bold()
-                    .frame(maxWidth:.infinity, alignment: .leading)
-                    .padding()
-                    .fixedSize(horizontal: false, vertical: true)
-                    .foregroundColor(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
-                Spacer()
-                Image("BowlNow_Logo")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(maxWidth: 50)
-                    .padding()
-            }
-            Text("Our platform creates an opportunity for the bowling community to earn and redeem rewards at their favorite centers. Made for bowlers, by bowlers, our mission is to provide a custom platform of inclusivity, support and feedback!")
-                .font(.subheadline)
+        VStack(alignment: .leading) {
+            Text("User Accounts: ")
+                .font(.title)
+                .bold()
+                .foregroundColor(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
+                .padding(.bottom)
+            Text("A user account is intended for all levels of bowlers who desire to visit and join loyalty programs at a nearby BowlNow registered bowling center!")
                 .frame(maxWidth:.infinity, alignment: .leading)
-                .padding([.horizontal,.bottom])
-                .foregroundColor(.black)
-            Text("Please start by creating an account below: ")
-                .font(.subheadline)
+                .fixedSize(horizontal: false, vertical: true)
+        }.frame(maxWidth:.infinity, alignment: .leading)
+        .padding([.top,.bottom])
+    }
+}
+
+struct CenterAccountInfo: View {
+    var body: some View {
+        VStack(alignment: .leading) {
+            Text("Center Accounts: ")
+                .font(.title)
+                .bold()
+                .foregroundColor(Color(red: 131/255, green: 202/255, blue: 238/255, opacity: 1.0))
+                .padding(.bottom)
+            Text("This form is for bowling centers ONLY who wish to join our program. Please signup with your centers information to give your customers access to loyalty, coupons and other exciting programs!")
                 .frame(maxWidth:.infinity, alignment: .leading)
-                .padding([.horizontal,.bottom])
-                .foregroundColor(.black)
-        }
+                .fixedSize(horizontal: false, vertical: true)
+        }.frame(maxWidth:.infinity, alignment: .leading)
+        .padding(.bottom)
     }
 }
 
@@ -100,7 +113,7 @@ struct UserButton: View {
         Button(action: {
             self.isShowingUser.toggle()
         }) {
-            Text("User Account")
+            Text("User Registration")
                 .foregroundColor(.white)
                 .bold()
         }
@@ -113,7 +126,9 @@ struct CenterButton: View {
         Button(action: {
             self.isShowingCenter.toggle()
         }) {
-            Text("Bowling Center").foregroundColor(.white).bold()
+            Text("Center Registration")
+                .foregroundColor(.white)
+                .bold()
         }
     }
 }

@@ -33,6 +33,7 @@ struct UserObject: Decodable, Hashable, Encodable{
     let IamUserMoid: String
     let Moid: String
     var Points: Int?
+    var PointsMoid: String?
 }
 
 //Decode array of user points

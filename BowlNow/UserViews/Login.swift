@@ -59,7 +59,6 @@ struct Login: View {
                         VStack {
                             Logo()
                             NavigationLink(destination: GlobalAdminHome(ActiveCenters: $ActiveCenters), isActive: $isAdminLogged) { EmptyView() }
-                            /*NavigationLink(destination: CenterAdminHome(), isActive: $isUserLogged) { EmptyView() }*/
                             NavigationLink(destination: MyCenters(ActiveCenters: $ActiveCenters, rootIsActive: $isUserLogged), isActive: $isUserLogged) { EmptyView() }
                         VStack {
                             EmailField(email: $email)
@@ -85,17 +84,16 @@ struct Login: View {
                         }
                         BottomButtons()
                     }
-                }.navigationBarTitle("Login")
+                }.navigationBarTitle("")
                 .navigationBarHidden(true)
             }.alert(isPresented: $showingAlert) {
                 Alert(title: Text((title)), message: Text((message)), dismissButton: .default(Text("OK")))
             }.onAppear(perform:  {
-                print(didLoadData)
                 if didLoadData == false {
                     CheckToken()
                 }
             })
-        }
+        }.accentColor(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
     }
     
     //Function for checking auth token
@@ -162,9 +160,11 @@ struct Login: View {
     func Login() {
         request.LoginRequest(email: self.email, password: self.password) {(success, message) in
             if success == true && message == "User" {
-               GetActiveCenters(Type: "User")
+                MyCenterData = []
+                GetActiveCenters(Type: "User")
             }
             else if success == true && message == "Admin" {
+                MyCenterData = []
                 GetActiveCenters(Type: "Admin")
             }
             else {
@@ -184,11 +184,13 @@ struct Login: View {
     func GetActiveCenters(Type: String) {
         globalRequests.ActiveCentersList() {(success, message, pendingData) in
             if success == true && Type == "User" {
+                print("is user")
                 ActiveCenters = pendingData
                 let AuthToken: String = UserDefaults.standard.string(forKey: "AuthToken") ?? ""
                 GetCenterUsers(AuthToken: AuthToken)
             }
             else if success == true && Type == "Admin" {
+                print("is admin")
                 ActiveCenters = pendingData
                 self.isAdminLogged.toggle()
             }
@@ -202,7 +204,8 @@ struct Login: View {
     
     //Function used for getting all center user objects for general user
     
-    /*Use current authtoken to retrieve objects. If success loop through all user objects in array calling a request
+    /*Use current authtoken to retrieve objects. If new user, user has no center user objects. In which case call next view
+     anyway and set cached value to empty. If success loop through all user objects in array calling a request
      to retrieve corresponding points collection for each. Then insert integer point value into user object for each center user
      and append array "MyCenterData" with now updated user objects. Once variable counter = the number of user objects retrieved and updated,
      then we can store the filled MyCenterData in cache after encoding. This array contains all user data for each bowling center they have
@@ -212,20 +215,32 @@ struct Login: View {
     func GetCenterUsers(AuthToken: String) {
         centerUserRequests.GetCenterUser(AuthToken: AuthToken, CenterMoid: "") {(success, message, userData) in
             if success == true {
-                for var user in userData {
-                    centerUserRequests.GetLoyaltyPoints(AuthToken: AuthToken, CenterMoid: user.CenterMoid) {(success, message, userPoints) in
-                        if success == true {
-                            for data in userPoints {
-                                user.Points = data.Points
+                if userData == [] {
+                    UserDefaults.standard.set(userData, forKey: "MyCenters")
+                    self.didLoadData = true
+                    self.isUserLogged.toggle()
+                } else {
+                    for var user in userData {
+                        centerUserRequests.GetLoyaltyPoints(AuthToken: AuthToken, CenterMoid: user.CenterMoid) {(success, message, userPoints) in
+                            if success == true {
+                                let data = userPoints[0]
+                                if user.Type == "Admin" {
+                                    user.Points = 0
+                                    user.PointsMoid = ""
+                                } else {
+                                    user.Points = data.Points
+                                    user.PointsMoid = data.Moid
+                                    
+                                }
                                 let newUserObject = user
                                 MyCenterData.append(newUserObject)
+                                print(MyCenterData)
                                 do {
                                     // Create JSON Encoder
                                     let encoder = JSONEncoder()
 
                                     // Encode Note
                                     let data = try encoder.encode(MyCenterData)
-                                    print("Stored my centers")
 
                                     // Write/Set Data
                                     UserDefaults.standard.set(data, forKey: "MyCenters")
@@ -237,18 +252,17 @@ struct Login: View {
                                 if counter == userData.count {
                                     self.didLoadData = true
                                     self.isUserLogged.toggle()
+                                    counter = 0
                                 }
+                            } else {
+                                self.title = "Failed To Load User Points"
+                                self.message = message
+                                self.showingAlert.toggle()
                             }
-                        }
-                        else {
-                            self.title = "Failed To Load User Points"
-                            self.message = message
-                            self.showingAlert.toggle()
                         }
                     }
                 }
-            }
-            else {
+            } else {
                 self.title = "Failed To Load User Data"
                 self.message = message
                 self.showingAlert.toggle()
@@ -379,7 +393,8 @@ struct BottomButtons: View {
             Button(action: {
                 self.showingSignUp = true
             }){
-                Text("Sign Up").foregroundColor(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
+                Text("Sign Up")
+                    .foregroundColor(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
             }
             Spacer()
             Divider()
@@ -389,7 +404,8 @@ struct BottomButtons: View {
             Button(action: {
                 self.showingForgotPassword = true
             }){
-                Text("Forgot Password?").foregroundColor(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
+                Text("Forgot Password?")
+                    .foregroundColor(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
             }.sheet(isPresented: self.$showingForgotPassword) {
                 ForgotPassword()
             }
@@ -398,13 +414,8 @@ struct BottomButtons: View {
                 .frame(maxWidth:2,maxHeight:30)
                 .background(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
             Spacer()
-            Button(action: {
-                let formattedString = "https://chicagolandbowlingservice.com/privacy-policy"
-                let url = URL(string: formattedString)!
-                UIApplication.shared.open(url)
-            }){
-                Text("Privacy").foregroundColor(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
-            }
+            Link("Privacy Policy", destination: URL(string: "https://www.freeprivacypolicy.com/live/f067ca10-f399-4fed-b177-93097be347ed")!)
+                .foregroundColor(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
         }.padding([.horizontal,.bottom])
     }
 }

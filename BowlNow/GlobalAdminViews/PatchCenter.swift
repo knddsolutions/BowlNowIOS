@@ -32,7 +32,7 @@ struct UrlField: View {
                     .scaledToFit()
                     .frame(maxWidth: 10, maxHeight: 30, alignment: .center)
                     .padding(.leading)
-                TextField("Enter url Ex. (test.png)", text: $Path)
+                TextField("Enter url Ex. (/test.png)", text: $Path)
                     .foregroundColor(.black)
                     .padding()
             }
@@ -71,7 +71,7 @@ struct PatchCenterButton: View {
         }) {
             Text("Patch")
                 .foregroundColor(.white)
-        }.frame(maxWidth: .infinity/2, maxHeight: 40)
+        }.frame(maxWidth: .infinity, minHeight: 50, maxHeight: 50, alignment: .center)
         .background(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
         .cornerRadius(10)
         .padding()
