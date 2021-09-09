@@ -34,7 +34,7 @@ struct MyCenters: View {
                     NavigationLink(
                         destination: CenterList(rootIsActive: $rootIsActive, ActiveCenters: $ActiveCenters),
                         label: {
-                            Text("+ ADD CENTER")
+                            Text("Find A Center")
                                 .frame(minWidth: 0, maxWidth: .infinity, minHeight:50, maxHeight: 50)
                                 .font(.system(size: 18))
                                 .padding()
@@ -52,15 +52,13 @@ struct MyCenters: View {
             .toolbar {
                 ToolbarItem(placement: .principal) {
                     Text("My Centers")
-                        .bold()
                         .foregroundColor(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: {
                         self.showingAllCenters.toggle()
                     }) {
-                        Text("+ ADD")
-                            .bold()
+                        Text("Find")
                             .foregroundColor(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
                     }
                 }

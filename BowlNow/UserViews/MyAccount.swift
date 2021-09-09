@@ -102,17 +102,19 @@ struct MyAccount: View {
                 .navigationBarBackButtonHidden(true)
                 .toolbar {
                     ToolbarItem(placement: .principal) {
-                        Text("Account")
-                            .bold()
-                            .foregroundColor(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
+                        Image("BowlNow_Logo")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(maxWidth: 40)
+                            .padding()
                     }
                     ToolbarItem(placement: .navigationBarLeading) {
                         Button(action: {
                             self.presentationMode.wrappedValue.dismiss()
                         }){
                             Text("My Centers")
-                                .foregroundColor(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
                                 .bold()
+                                .font(.headline)
                         }
                     }
                     ToolbarItem(placement: .navigationBarTrailing) {
@@ -120,8 +122,8 @@ struct MyAccount: View {
                             rootIsActive.toggle()
                         }){
                             Text("Log Out")
-                                .foregroundColor(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
                                 .bold()
+                                .font(.headline)
                         }
                     }
                 }

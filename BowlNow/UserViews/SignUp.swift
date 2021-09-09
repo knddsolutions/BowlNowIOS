@@ -12,62 +12,51 @@ struct SignUp: View {
     @State private var Password: String = ""
     @State private var isShowingCenter: Bool = false
     @State private var isShowingUser: Bool = false
-    
+    @Binding var isShowingWelcome: Bool
     var body: some View {
         GeometryReader { geometry in
             ZStack {
                 Color.white.edgesIgnoringSafeArea(.all)
                 VStack {
-                    Spacer()
-                        VStack {
-                            UserAccountInfo()
-                            UserButton(isShowingUser: $isShowingUser)
-                                .frame(maxWidth: .infinity, maxHeight: geometry.size.height/7, alignment: .center)
-                                .background(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
-                                .cornerRadius(10)
-                                .sheet(isPresented: $isShowingUser) {
-                                    UserRegister()
-                                }
-                            HStack {
-                                Divider()
-                                    .frame(maxWidth:.infinity, maxHeight:2)
-                                    .background(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
-                                    .padding(.horizontal)
-                                Text("Or")
-                                    .font(.subheadline)
-                                    .foregroundColor(.black)
-                                Divider()
-                                    .frame(maxWidth:.infinity, maxHeight:2)
-                                    .background(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
-                                    .padding(.horizontal)
-                            }.padding(.top, 20)
-                            .padding(.bottom, 20)
-                            CenterAccountInfo()
-                            CenterButton(isShowingCenter: $isShowingCenter)
-                                .frame(maxWidth: .infinity, maxHeight: geometry.size.height/7, alignment: .center)
-                                .background(Color(red: 131/255, green: 202/255, blue: 238/255, opacity: 1.0))
-                                .cornerRadius(10)
-                                .sheet(isPresented: $isShowingCenter) {
-                                    CenterRegister()
-                                }
-                        }.padding()
-                        Spacer()
-                }.background(Image("retro_background")
+                    HStack {
+                        Button(action: {self.isShowingWelcome.toggle()}) {
+                            Image(systemName: "chevron.left.2")
                                 .resizable()
-                                .aspectRatio(geometry.size, contentMode: .fill)
-                                .edgesIgnoringSafeArea(.bottom).opacity(0.1))
-                .navigationBarTitle("",displayMode: .inline)
+                                .scaledToFit()
+                                .frame(width: 25, height: 25)
+                        }.frame(maxWidth: .infinity, alignment: .leading)
+                        Image("BowlNow_Logo")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(maxWidth: 50)
+                        Text("")
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }.frame(maxWidth: .infinity)
+                    .padding()
+                    Divider()
+                    NavigationLink(destination: CenterRegister(isShowingCenter: $isShowingCenter), isActive: $isShowingCenter) { EmptyView()}
+                    NavigationLink(destination: UserRegister(isShowingUser: $isShowingUser), isActive: $isShowingUser) { EmptyView()}
+                    VStack {
+                        UserAccountInfo()
+                        CenterAccountInfo()
+                        UserButton(isShowingUser: $isShowingUser)
+                            .frame(maxWidth: .infinity, maxHeight: geometry.size.height/7, alignment: .center)
+                            .background(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
+                            .cornerRadius(10)
+                            .padding([.top,.bottom])
+                        CenterButton(isShowingCenter: $isShowingCenter)
+                            .frame(maxWidth: .infinity, maxHeight: geometry.size.height/7, alignment: .center)
+                            .background(Color(red: 131/255, green: 202/255, blue: 238/255, opacity: 1.0))
+                            .cornerRadius(10)
+                    }.padding()
+                    Spacer()
+                }.navigationBarTitle("",displayMode: .inline)
+                .navigationBarHidden(true)
                 .toolbar {
                     ToolbarItem(placement: .principal) {
                         Text("Welcome")
                             .bold()
                             .foregroundColor(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
-                    }
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Image("BowlNow_Logo")
-                            .resizable()
-                            .frame(width:30, height: 30)
-                            .scaledToFit()
                     }
                 }
             }
@@ -78,32 +67,28 @@ struct SignUp: View {
 struct UserAccountInfo: View {
     var body: some View {
         VStack(alignment: .leading) {
-            Text("User Accounts: ")
-                .font(.title)
+            Text("BowlNow ")
                 .bold()
+                .font(.largeTitle)
                 .foregroundColor(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
-                .padding(.bottom)
-            Text("A user account is intended for all levels of bowlers who desire to visit and join loyalty programs at a nearby BowlNow registered bowling center!")
-                .frame(maxWidth:.infinity, alignment: .leading)
-                .fixedSize(horizontal: false, vertical: true)
+            + Text("is a platform designed and developed for bowlers by bowlers. Our main goal is to enhance the bowling experience for both bowling centers and the customers they serve.")
+                .bold()
         }.frame(maxWidth:.infinity, alignment: .leading)
-        .padding([.top,.bottom])
+        .padding([.top])
     }
 }
 
 struct CenterAccountInfo: View {
     var body: some View {
-        VStack(alignment: .leading) {
-            Text("Center Accounts: ")
-                .font(.title)
+        VStack() {
+            Text("Register ")
                 .bold()
-                .foregroundColor(Color(red: 131/255, green: 202/255, blue: 238/255, opacity: 1.0))
-                .padding(.bottom)
-            Text("This form is for bowling centers ONLY who wish to join our program. Please signup with your centers information to give your customers access to loyalty, coupons and other exciting programs!")
-                .frame(maxWidth:.infinity, alignment: .leading)
-                .fixedSize(horizontal: false, vertical: true)
+                .font(.largeTitle)
+                .foregroundColor(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
+            + Text("for our platform by tapping below if you are new user. Keep in mind that center registration is only for proprietors looking to add their center to our program. Everyone else is considered a user!")
+                .bold()
         }.frame(maxWidth:.infinity, alignment: .leading)
-        .padding(.bottom)
+        .padding([.top,.bottom])
     }
 }
 
@@ -116,6 +101,7 @@ struct UserButton: View {
             Text("User Registration")
                 .foregroundColor(.white)
                 .bold()
+                .frame(minWidth: 100, maxWidth: .infinity, minHeight: 40, maxHeight: .infinity, alignment: .center)
         }
     }
 }
@@ -129,12 +115,7 @@ struct CenterButton: View {
             Text("Center Registration")
                 .foregroundColor(.white)
                 .bold()
+                .frame(minWidth: 100, maxWidth: .infinity, minHeight: 40, maxHeight: .infinity, alignment: .center)
         }
-    }
-}
-
-struct SignUp_Previews: PreviewProvider {
-    static var previews: some View {
-        SignUp()
     }
 }

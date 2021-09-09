@@ -101,7 +101,6 @@ struct CenterList: View {
             .toolbar {
                 ToolbarItem(placement: .principal) {
                     Text("All Active Centers")
-                        .bold()
                         .foregroundColor(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
                 }
             }

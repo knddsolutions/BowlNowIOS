@@ -15,61 +15,100 @@ struct CenterRegister: View {
     @State private var Email: String = ""
     @State private var MemberID: String = ""
     @State private var showingAlert = false
+    @State private var showingAboutCenterAccount: Bool = false
     @State var message: String = ""
     @State var title: String = ""
+    @State private var isLoading: Bool = false
+    @Binding var isShowingCenter: Bool
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     var body: some View {
         GeometryReader { geometry in
-            ZStack {
-                Color.white.edgesIgnoringSafeArea(.all)
+            ZStack(alignment: .bottom){
+                Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0)
+                    .edgesIgnoringSafeArea(.all)
+                RoundedRectangle(cornerRadius: 10)
+                    .edgesIgnoringSafeArea(.all)
+                    .foregroundColor(.white)
+                    .frame(width: geometry.size.width, height: geometry.size.height/3, alignment: .bottom)
+                VStack {
+                    Button(action: {
+                        self.presentationMode.wrappedValue.dismiss()
+                    }) {
+                        Image(systemName: "chevron.left.2")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 25, height: 25)
+                            .foregroundColor(.white)
+                    }
+                    Spacer()
+                }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+                .padding()
                 VStack {
                     Image("BowlNow_Logo")
                         .resizable()
                         .scaledToFit()
                         .frame(maxWidth: 150)
                         .padding(.top)
-                    Text("Center Account")
-                        .font(.title)
-                        .bold()
-                        .foregroundColor(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
-                    Text("Note: This will be verified by BowlNow!")
-                        .font(.subheadline)
-                        .multilineTextAlignment(.center)
-                        .foregroundColor(.gray)
                     Spacer()
-                    Text("Please fill out our form below:")
-                        .padding([.horizontal,.top])
-                        .frame(maxWidth:.infinity, alignment: .leading)
-                        .fixedSize(horizontal: false, vertical: true)
-                    VStack {
-                        VStack {
-                            CenterNameField(Center: $Center)
-                            CenterEmailField(Email: $Email)
-                            CenterBpaaField(MemberID: $MemberID)
-                        }
+                    Text("Center Registration")
+                        .font(.title)
+                        .foregroundColor(.white)
+                        .bold()
+                        .padding()
+                    Spacer()
+                    VStack(spacing: 10) {
+                        CenterNameField(Center: $Center)
+                        CenterEmailField(Email: $Email)
+                        CenterBpaaField(MemberID: $MemberID)
                         Button(action: {
                             CheckFields()
                         }){
-                            Text("Create Account").foregroundColor(.white).bold()
+                            Text("Create Account")
+                                .foregroundColor(.white)
+                                .bold()
+                                .frame(minWidth: 100, maxWidth: .infinity, minHeight: 40, maxHeight: .infinity, alignment: .center)
                         }.frame(maxWidth: .infinity, minHeight: 50, maxHeight: 50)
                         .background(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
                         .cornerRadius(10)
-                        .padding([.horizontal, .bottom])
+                        .padding([.horizontal,.bottom])
                     }.background(Color(.white))
                     .cornerRadius(10)
                     .shadow(radius: 10.0)
                     .padding(.horizontal)
                     Spacer()
-                    SwipeDown()
-                }.background(Image("retro_background")
-                                .resizable()
-                                .aspectRatio(geometry.size, contentMode: .fill)
-                                .edgesIgnoringSafeArea(.all).opacity(0.1))
-                .navigationBarTitle("", displayMode: .inline)
-            }
-            .navigationBarTitle("",displayMode: .inline)
+                    Button(action: {
+                        self.showingAboutCenterAccount.toggle()
+                    }){
+                        HStack{
+                            Text("What is a center account?")
+                                .foregroundColor(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
+                            Image(systemName: "arrow.right")
+                                .foregroundColor(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
+                        }
+                    }
+                    Spacer()
+                }.sheet(isPresented: $showingAboutCenterAccount, content: {
+                    AboutCenterAccount()
+                })
+                if isLoading {
+                    LoadingView()
+                }
+            }.navigationBarTitle("",displayMode: .inline)
             .navigationBarHidden(true)
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    Text("Center Accounts")
+                        .bold()
+                        .foregroundColor(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
+                }
+            }
             .alert(isPresented: $showingAlert) {
-                Alert(title: Text((title)), message: Text((message)), dismissButton: .default(Text("OK")))
+                Alert(title: Text((title)), message: Text((message)), dismissButton: .default(Text("OK")){
+                    isShowingCenter.toggle()
+                })
+            }
+            .onTapGesture {
+                self.endTextEditing()
             }
         }
     }
@@ -83,15 +122,18 @@ struct CenterRegister: View {
             self.message = "Please enter a center name"
         }
         else {
+            self.isLoading.toggle()
             requests.CenterRegistration(center: self.Center, email: self.Email, memberID: self.MemberID, platform: self.platform) {(success, message, pendingData) in
                 if success == true {
                     self.title = "Success!"
                     self.message = message
+                    self.isLoading.toggle()
                     self.showingAlert.toggle()
                 }
                 else {
                     self.title = "Center Registration Failed!"
                     self.message = message
+                    self.isLoading.toggle()
                     self.showingAlert.toggle()
                 }
             }
@@ -102,35 +144,44 @@ struct CenterRegister: View {
 struct CenterNameField: View {
     @Binding var Center: String
     var body: some View {
-        HStack {
-            Image(systemName: "person")
-                .padding()
-                .foregroundColor(.black)
-            VStack{
-                TextField("Enter your centers name", text: $Center).foregroundColor(.black)
-                Divider()
+        VStack {
+            HStack {
+                Image("Bowl_now_pin")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(maxWidth: 10, maxHeight: 30, alignment: .center)
+                    .padding(.leading)
+                TextField("Enter your centers name", text: $Center)
+                    .font(.subheadline)
+                    .foregroundColor(.black)
+                    .padding()
             }
-        }.background(Color(.white))
+        }.background(Color.white)
         .cornerRadius(10)
-        .opacity(0.9)
-        .padding([.horizontal, .top])
+        .shadow(radius: 5)
+        .padding([.top,.horizontal])
     }
 }
 
 struct CenterEmailField: View {
     @Binding var Email: String
     var body: some View {
-        HStack {
-            Image(systemName: "lock")
-                .foregroundColor(.black)
-                .padding()
-            VStack{
-                TextField("Enter your email", text: $Email).foregroundColor(.black)
-                Divider()
+        VStack {
+            HStack {
+                Image("Bowl_now_pin")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(maxWidth: 10, maxHeight: 30, alignment: .center)
+                    .padding(.leading)
+                TextField("Enter your email", text: $Email)
+                    .font(.subheadline)
+                    .foregroundColor(.black)
+                    .padding()
+                    .keyboardType(.emailAddress)
             }
-        }.background(Color(.white))
+        }.background(Color.white)
         .cornerRadius(10)
-        .opacity(0.9)
+        .shadow(radius: 5)
         .padding(.horizontal)
     }
 }
@@ -138,23 +189,22 @@ struct CenterEmailField: View {
 struct CenterBpaaField: View {
     @Binding var MemberID: String
     var body: some View {
-        HStack {
-            Image(systemName: "lock")
-                .foregroundColor(.black)
-                .padding()
-            VStack {
-                TextField("BPAA number (if applicable)", text: $MemberID).foregroundColor(.black)
-                Divider()
+        VStack {
+            HStack {
+                Image("Bowl_now_pin")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(maxWidth: 10, maxHeight: 30, alignment: .center)
+                    .padding(.leading)
+                TextField("BPAA number (if applicable)", text: $MemberID)
+                    .font(.subheadline)
+                    .foregroundColor(.black)
+                    .padding()
             }
-        }.background(Color(.white))
+        }.background(Color.white)
         .cornerRadius(10)
-        .opacity(0.9)
-        .padding([.horizontal,.bottom])
+        .shadow(radius: 5)
+        .padding(.horizontal)
     }
 }
 
-struct CenterRegister_Previews: PreviewProvider {
-    static var previews: some View {
-        CenterRegister()
-    }
-}

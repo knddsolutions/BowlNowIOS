@@ -35,6 +35,7 @@ struct Login: View {
     @State private var isActive: Bool = false
     @State private var message: String = ""
     @State private var title: String = ""
+    @State private var isLoading: Bool = false
     @State private var didLoadData: Bool = false
     @State private var counter: Int = 0
     @State private var ActiveCenters: [CenterObject] = []
@@ -50,7 +51,7 @@ struct Login: View {
                 ZStack(alignment: .bottom) {
                     Image("Ball_Return")
                         .resizable()
-                        .aspectRatio(geometry.size, contentMode: .fill)
+                        .frame(width:geometry.size.width)
                         .edgesIgnoringSafeArea(.all)
                     RoundedRectangle(cornerRadius: 10)
                         .edgesIgnoringSafeArea(.all)
@@ -69,7 +70,10 @@ struct Login: View {
                                 Button(action: {
                                     CheckFields()
                                 }){
-                                    Text("Sign In").foregroundColor(.white).bold()
+                                    Text("Sign In")
+                                        .foregroundColor(.white)
+                                        .bold()
+                                        .frame(minWidth: 100, maxWidth: .infinity, minHeight: 40, maxHeight: 40, alignment: .center)
                                 }.frame(maxWidth: .infinity, minHeight: 50, maxHeight: 50)
                                 .background(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
                                 .cornerRadius(10)
@@ -79,10 +83,10 @@ struct Login: View {
                         .cornerRadius(10)
                         .padding(.horizontal)
                         .shadow(radius: 3)
-                        VStack {
-                            FacebookAppleButtons()
-                        }
-                        BottomButtons()
+                        BottomButtons(didLoadData: $didLoadData)
+                    }
+                    if isLoading {
+                        LoadingView()
                     }
                 }.navigationBarTitle("")
                 .navigationBarHidden(true)
@@ -90,10 +94,18 @@ struct Login: View {
                 Alert(title: Text((title)), message: Text((message)), dismissButton: .default(Text("OK")))
             }.onAppear(perform:  {
                 if didLoadData == false {
-                    CheckToken()
+                    startLoading()
                 }
             })
+            .onTapGesture {
+                self.endTextEditing()
+            }
         }.accentColor(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
+    }
+    
+    func startLoading() {
+        self.isLoading.toggle()
+        CheckToken()
     }
     
     //Function for checking auth token
@@ -103,7 +115,7 @@ struct Login: View {
      display alert in UI for acknowledgement.*/
     
     func CheckToken() {
-            if UserDefaults.standard.string(forKey: "AuthToken") != nil {
+        if UserDefaults.standard.string(forKey: "AuthToken") != nil {
             let AuthToken: String = UserDefaults.standard.string(forKey: "AuthToken") ?? ""
             request.VerifyAuth(authToken: AuthToken) {(success, message) in
                 if success == true && message == "User" {
@@ -115,9 +127,12 @@ struct Login: View {
                 else {
                     self.title = "Login Failed!"
                     self.message = message
+                    self.isLoading.toggle()
                     self.showingAlert.toggle()
                 }
             }
+        } else {
+            self.isLoading.toggle()
         }
     }
     
@@ -130,10 +145,12 @@ struct Login: View {
     func CheckFields() {
         if (self.email.count == 0) {
             self.message = "Email cannot be empty"
+            self.isLoading.toggle()
             self.showingAlert = true
         }
         else if (self.password.count == 0) {
             self.message = "Password cannot be empty"
+            self.isLoading.toggle()
             self.showingAlert = true
         }
         else {
@@ -158,6 +175,7 @@ struct Login: View {
      display alert in UI for acknowledgement.*/
     
     func Login() {
+        self.isLoading.toggle()
         request.LoginRequest(email: self.email, password: self.password) {(success, message) in
             if success == true && message == "User" {
                 MyCenterData = []
@@ -170,6 +188,7 @@ struct Login: View {
             else {
                 self.title = "Login Failed!"
                 self.message = message
+                self.isLoading.toggle()
                 self.showingAlert.toggle()
             }
         }
@@ -184,7 +203,6 @@ struct Login: View {
     func GetActiveCenters(Type: String) {
         globalRequests.ActiveCentersList() {(success, message, pendingData) in
             if success == true && Type == "User" {
-                print("is user")
                 ActiveCenters = pendingData
                 let AuthToken: String = UserDefaults.standard.string(forKey: "AuthToken") ?? ""
                 GetCenterUsers(AuthToken: AuthToken)
@@ -197,6 +215,7 @@ struct Login: View {
             else {
                 self.title = "Failed To Load Center Data"
                 self.message = message
+                //self.isLoading.toggle()
                 self.showingAlert.toggle()
             }
         }
@@ -234,7 +253,6 @@ struct Login: View {
                                 }
                                 let newUserObject = user
                                 MyCenterData.append(newUserObject)
-                                print(MyCenterData)
                                 do {
                                     // Create JSON Encoder
                                     let encoder = JSONEncoder()
@@ -253,10 +271,12 @@ struct Login: View {
                                     self.didLoadData = true
                                     self.isUserLogged.toggle()
                                     counter = 0
+                                    self.isLoading.toggle()
                                 }
                             } else {
                                 self.title = "Failed To Load User Points"
                                 self.message = message
+                                self.isLoading.toggle()
                                 self.showingAlert.toggle()
                             }
                         }
@@ -265,6 +285,7 @@ struct Login: View {
             } else {
                 self.title = "Failed To Load User Data"
                 self.message = message
+                self.isLoading.toggle()
                 self.showingAlert.toggle()
             }
         }
@@ -290,11 +311,15 @@ struct EmailField: View {
     var body: some View {
         VStack {
             HStack {
-                Image("Bowl_now_pin").resizable().scaledToFit().frame(maxWidth: 10, maxHeight: 30, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
+                Image("Bowl_now_pin")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(maxWidth: 10, maxHeight: 30, alignment: .center)
                     .padding(.leading)
                 TextField("Enter your email", text: $email)
                     .foregroundColor(.black)
                     .padding()
+                    .keyboardType(.emailAddress)
             }
         }.background(Color.white)
         .cornerRadius(10)
@@ -310,9 +335,12 @@ struct PasswordField: View {
     var body: some View {
         VStack {
             HStack {
-                Image("Bowl_now_pin").resizable().scaledToFit().frame(maxWidth: 10, maxHeight: 30, alignment: .center)
+                Image("Bowl_now_pin")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(maxWidth: 10, maxHeight: 30, alignment: .center)
                     .padding(.leading)
-                TextField("Enter your password", text: $password)
+                SecureField("Enter your password", text: $password)
                     .foregroundColor(.black)
                     .padding()
             }
@@ -330,7 +358,9 @@ struct ToggleButton: View {
     @Binding var remember: Bool
     var body: some View {
         Toggle(isOn: $remember) {
-            Text("Remember Me").foregroundColor(.gray)
+            Text("Remember Me")
+                .font(.headline)
+                .foregroundColor(.gray)
         }.toggleStyle(CheckboxToggleStyle())
         .padding([.leading,.bottom])
     }
@@ -354,7 +384,7 @@ struct CheckboxToggleStyle: ToggleStyle {
 //View for facebook and apple sign-ins
 //TODO
 
-struct FacebookAppleButtons: View {
+/*struct FacebookAppleButtons: View {
     var body: some View {
         FacebookButton().frame(width: .infinity, height: 40).cornerRadius(10).padding([.horizontal,.top])
         if #available(iOS 14.0, *) {
@@ -378,7 +408,7 @@ struct FacebookAppleButtons: View {
             // Fallback on earlier versions
         }
     }
-}
+}*/
 
 //View for sign-up, forgot password and privacy buttons
 //Bottom of UI
@@ -386,14 +416,19 @@ struct FacebookAppleButtons: View {
 struct BottomButtons: View {
     @State private var showingSignUp = false
     @State private var showingForgotPassword = false
+    @Binding var didLoadData: Bool
     var body: some View {
         Spacer()
-        NavigationLink(destination: SignUp(), isActive: $showingSignUp) { EmptyView()}
+        NavigationLink(destination: SignUp(isShowingWelcome: $showingSignUp), isActive: $showingSignUp) { EmptyView()}
         HStack {
             Button(action: {
+                if !didLoadData {
+                    self.didLoadData.toggle()
+                }
                 self.showingSignUp = true
             }){
                 Text("Sign Up")
+                    .font(.headline)
                     .foregroundColor(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
             }
             Spacer()
@@ -405,9 +440,10 @@ struct BottomButtons: View {
                 self.showingForgotPassword = true
             }){
                 Text("Forgot Password?")
+                    .font(.headline)
                     .foregroundColor(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
             }.sheet(isPresented: self.$showingForgotPassword) {
-                ForgotPassword()
+                ForgotPassword(showingForgotPassword: $showingForgotPassword)
             }
             Spacer()
             Divider()
@@ -415,6 +451,7 @@ struct BottomButtons: View {
                 .background(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
             Spacer()
             Link("Privacy Policy", destination: URL(string: "https://www.freeprivacypolicy.com/live/f067ca10-f399-4fed-b177-93097be347ed")!)
+                .font(.headline)
                 .foregroundColor(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
         }.padding([.horizontal,.bottom])
     }
@@ -444,9 +481,10 @@ struct SwipeDown: View {
             LinearGradient(gradient: Gradient(colors: [.white, (Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))]), startPoint: .top, endPoint: .bottom)
                     .mask(Image(systemName: "arrow.down")
                         .resizable()
-                        .frame(width: 40, height: 40, alignment: .center)
-                        .padding())
-        }.frame(width: 40, height: 40).padding(.bottom)
+                        .frame(width: 35, height: 35, alignment: .center)
+                            .padding(.bottom))
+        }.frame(width: 35, height: 35)
+        .padding(.bottom)
     }
 }
 
@@ -456,3 +494,22 @@ struct SwiftUIView_Previews: PreviewProvider {
     }
 }
 
+
+struct LoadingView: View {
+    var body: some View {
+        ZStack {
+            Color(.white)
+                .opacity(0.8)
+            ProgressView()
+                .progressViewStyle(CircularProgressViewStyle(tint: Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0)))
+                .scaleEffect(3)
+        }.edgesIgnoringSafeArea(.all)
+    }
+}
+
+extension View {
+  func endTextEditing() {
+    UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder),
+                                    to: nil, from: nil, for: nil)
+  }
+}

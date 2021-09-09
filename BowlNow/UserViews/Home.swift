@@ -19,7 +19,6 @@ struct Home: View {
     @State var url: URL?
     @Binding var rootIsActive:Bool
     @Environment(\.presentationMode) var presentationMode
-    
     var body: some View {
         GeometryReader { geometry in
                 VStack {
@@ -74,18 +73,19 @@ struct Home: View {
                 .navigationBarBackButtonHidden(true)
                 .toolbar {
                     ToolbarItem(placement: .principal) {
-                        RoundedRectangle(cornerSize: CGSize(width: 10, height: 10))
-                            .frame(width: geometry.size.width/2, height:30)
-                            .foregroundColor(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
-                            .overlay(Text("\(Fname) \(Lname)")
-                                        .bold()
-                                        .foregroundColor(.white), alignment: .center)
+                        Image("BowlNow_Logo")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(maxWidth: 40)
+                            .padding()
                     }
                     ToolbarItem(placement: .navigationBarLeading) {
                         Button(action: {
                             self.presentationMode.wrappedValue.dismiss()
                         }) {
-                            Text("Centers")
+                            Text("My Centers")
+                                .font(.headline)
+                                .bold()
                         }
                     }
                     ToolbarItem(placement: .navigationBarTrailing) {
@@ -93,6 +93,7 @@ struct Home: View {
                             self.isShowingHelp.toggle()
                         }) {
                             Text("Support")
+                                .font(.headline)
                         }
                     }
                 }

@@ -10,10 +10,17 @@ import SwiftUI
 struct Coupons: View {
     @State var Fname: String = UserDefaults.standard.string(forKey: "Fname") ?? ""
     @State var Lname: String = UserDefaults.standard.string(forKey: "Lname") ?? ""
+    @State private var isShowingHelp: Bool = false
+    @Environment(\.presentationMode) var presentationMode
     var body: some View {
         GeometryReader { geometry in
             ZStack {
                 Color.white.edgesIgnoringSafeArea(.all)
+                Image("retro_background")
+                                .resizable()
+                                .scaledToFill()
+                                .opacity(0.1)
+                NavigationLink(destination: Help(), isActive: $isShowingHelp) { EmptyView() }
                 ScrollView(.horizontal) {
                     HStack {
                         ForEach(0..<4) {_ in
@@ -23,21 +30,35 @@ struct Coupons: View {
                         .cornerRadius(10)
                         .shadow(radius: 5)
                         .padding()
-                    }
-                }.padding().background(Image("retro_background")
-                                .resizable()
-                                .aspectRatio(geometry.size, contentMode: .fill)
-                                .opacity(0.1))
+                    }.padding()
+                }
             }.navigationBarTitle("",displayMode: .inline)
             .navigationBarBackButtonHidden(true)
             .toolbar {
                 ToolbarItem(placement: .principal) {
-                    RoundedRectangle(cornerSize: CGSize(width: 10, height: 10))
-                        .frame(width: geometry.size.width/2, height:30)
-                        .foregroundColor(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
-                        .overlay(Text("\(Fname) \(Lname)")
-                                    .bold()
-                                    .foregroundColor(.white), alignment: .center)
+                    Image("BowlNow_Logo")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(maxWidth: 40)
+                        .padding()
+                }
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: {
+                        self.isShowingHelp.toggle()
+                    }) {
+                        Text("Support")
+                            .font(.headline)
+                            .bold()
+                    }
+                }
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button(action: {
+                        self.presentationMode.wrappedValue.dismiss()
+                    }){
+                        Text("My Centers")
+                            .bold()
+                            .font(.headline)
+                    }
                 }
             }
         }

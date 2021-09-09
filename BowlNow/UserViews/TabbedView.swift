@@ -49,7 +49,8 @@ struct TabbedView: View {
                             TabBarIcon(viewRouter: viewRouter, assignedPage: .account,width: geometry.size.width/5, height: geometry.size.height/20, systemIconName: "person.circle.fill", tabName: "Account")
                         }
                     }.frame(height: geometry.size.height/8)
-                    .background(Color(red: 0.969, green: 0.969, blue: 0.969).shadow(radius: 2))
+                    .background(Color(.white)
+                                    .shadow(radius: 2))
                 }.frame(width: geometry.size.width)
                 .edgesIgnoringSafeArea(.bottom)
                 .sheet(isPresented: self.$showQR) {
@@ -74,21 +75,28 @@ struct PlusMenu: View {
         VStack {
             Spacer()
             Text("Scan this QR code")
+                .font(.headline)
+                .bold()
+                .foregroundColor(.white)
             Image(uiImage: generateQRCode(from: "\(self.CenterUserID)\n\(self.Fname)\n\(self.Email)\n\(self.CenterMoid)\n\(self.Points)\n\(self.PointsMoid)"))
                 .interpolation(.none)
                 .resizable()
                 .scaledToFit()
                 .frame(width: 200, height: 200)
+                .foregroundColor(.white)
             Spacer()
-            Text("Swipe down to close")
             VStack {
-                LinearGradient(gradient: Gradient(colors: [.white, (Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))]), startPoint: .top, endPoint: .bottom)
-                        .mask(Image(systemName: "arrow.down")
-                            .resizable()
-                            .frame(width: 50, height: 50, alignment: .center)
-                            .padding())
-            }.frame(width: 50, height: 50).padding(.bottom)
-        }
+                Text("Swipe down to close")
+                    .font(.headline)
+                    .bold()
+                    .foregroundColor(.white)
+                Image(systemName: "arrow.down")
+                    .frame(width: 35, height: 35, alignment: .center)
+                    .foregroundColor(.white)
+            }.padding(.bottom)
+        }.frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
+        .edgesIgnoringSafeArea(.bottom)
     }
     func generateQRCode(from string: String) -> UIImage {
         let data = Data(string.utf8)
@@ -118,7 +126,7 @@ struct TabBarIcon: View {
                 .font(.footnote)
         }.padding(.horizontal, -4).onTapGesture {
             viewRouter.currentPage = assignedPage
-        } .foregroundColor(viewRouter.currentPage == assignedPage ? Color(.black) : (Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0)))
+        } .foregroundColor(viewRouter.currentPage == assignedPage ? (Color(red: 131/255, green: 202/255, blue: 238/255, opacity: 1.0)) : (Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0)))
     }
 }
 

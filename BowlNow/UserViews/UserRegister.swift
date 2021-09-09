@@ -15,41 +15,56 @@ struct UserRegister: View {
     @State private var message: String = ""
     @State var title: String = ""
     @State private var showingAlert = false
-    
+    @State private var showingAboutUserAccount: Bool = false
+    @State private var isLoading: Bool = false
+    @Binding var isShowingUser: Bool
+    @Environment(\.presentationMode) var presentationMode
     var body: some View {
         GeometryReader { geometry in
-            ZStack {
-                Color.white.edgesIgnoringSafeArea(.all)
+            ZStack(alignment: .bottom) {
+                Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0)
+                    .edgesIgnoringSafeArea(.all)
+                RoundedRectangle(cornerRadius: 10)
+                    .edgesIgnoringSafeArea(.all)
+                    .foregroundColor(.white)
+                    .frame(width: geometry.size.width, height: geometry.size.height/3, alignment: .bottom)
+                VStack {
+                    Button(action: {
+                        self.presentationMode.wrappedValue.dismiss()
+                    }) {
+                        Image(systemName: "chevron.left.2")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 25, height: 25)
+                            .foregroundColor(.white)
+                    }
+                    Spacer()
+                }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+                .padding()
                 VStack {
                     Image("BowlNow_Logo")
                         .resizable()
                         .scaledToFit()
                         .frame(maxWidth: 150)
                         .padding(.top)
-                    Text("User Account")
-                        .font(.title)
-                        .bold()
-                        .foregroundColor(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
-                    Text("Note: You must have access to the email address you enter below!")
-                        .font(.subheadline)
-                        .multilineTextAlignment(.center)
-                        .foregroundColor(.gray)
-                        .padding(.horizontal)
                     Spacer()
-                    Text("Please fill out our form below:")
-                        .padding([.horizontal,.top])
-                        .frame(maxWidth:.infinity, alignment: .leading)
-                        .fixedSize(horizontal: false, vertical: true)
-                    VStack {
-                        VStack {
-                            UserEmailField(Email: $Email)
-                            UserPasswordField(Password: $Password)
-                            UserConfirmPasswordField(confirmPassword: $confirmPassword)
-                        }
+                    Text("User Registration")
+                        .font(.title)
+                        .foregroundColor(.white)
+                        .bold()
+                        .padding()
+                    Spacer()
+                    VStack(spacing: 10) {
+                        UserEmailField(Email: $Email)
+                        UserPasswordField(Password: $Password)
+                        UserConfirmPasswordField(confirmPassword: $confirmPassword)
                         Button(action: {
-                           CheckFields()
+                            CheckFields()
                         }){
-                            Text("Create Account").foregroundColor(.white).bold()
+                            Text("Create Account")
+                                .foregroundColor(.white)
+                                .bold()
+                                .frame(minWidth: 100, maxWidth: .infinity, minHeight: 40, maxHeight: .infinity, alignment: .center)
                         }.frame(maxWidth: .infinity, minHeight: 50, maxHeight: 50)
                         .background(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
                         .cornerRadius(10)
@@ -58,22 +73,40 @@ struct UserRegister: View {
                     .cornerRadius(10)
                     .shadow(radius: 10)
                     .padding(.horizontal)
-                    .navigationBarTitle("User Registration",displayMode: .inline)
-                    .navigationBarItems(trailing: Image("BowlNow_Logo")
-                                            .resizable()
-                                            .scaledToFit()
-                                            .frame(maxWidth: 50)
-                                            .padding(.top))
                     Spacer()
-                    SwipeDown()
-                }.background(Image("retro_background")
-                                .resizable()
-                                .aspectRatio(geometry.size, contentMode: .fill)
-                                .edgesIgnoringSafeArea(.all).opacity(0.1))
+                    Button(action: {
+                        self.showingAboutUserAccount.toggle()
+                    }){
+                        HStack {
+                            Text("What is a user account?")
+                                .foregroundColor(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
+                            Image(systemName: "arrow.right")
+                                .foregroundColor(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
+                        }
+                    }
+                    Spacer()
+                }.sheet(isPresented: $showingAboutUserAccount){
+                    AboutUserAccount()
+                }
+                if isLoading {
+                    LoadingView()
+                }
             }.navigationBarTitle("",displayMode: .inline)
             .navigationBarHidden(true)
-            .alert(isPresented: $showingAlert) {
-                    Alert(title: Text((title)), message: Text((message)), dismissButton: .default(Text("OK")))
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    Text("User Accounts")
+                        .bold()
+                        .foregroundColor(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
+                }
+            }
+            .alert(isPresented: $showingAlert, content: {
+                Alert(title: Text((title)), message: Text((message)), dismissButton: .default(Text("OK")) {
+                    isShowingUser.toggle()
+                })
+            })
+            .onTapGesture {
+                self.endTextEditing()
             }
         }
     }
@@ -88,6 +121,7 @@ struct UserRegister: View {
             self.showingAlert.toggle()
         }
         else {
+            self.isLoading.toggle()
             requests.UserRegistration(email: self.Email, password: self.confirmPassword) {(success, message) in
                 if success == true {
                     self.title = "Success!"
@@ -97,6 +131,7 @@ struct UserRegister: View {
                     self.title = "Sign Up Failed"
                     self.message = message
                 }
+                self.isLoading.toggle()
                 self.showingAlert.toggle()
             }
         }
@@ -106,35 +141,44 @@ struct UserRegister: View {
 struct UserEmailField: View {
     @Binding var Email: String
     var body: some View {
-        HStack {
-            Image(systemName: "person")
-                .padding()
-                .foregroundColor(.black)
-            VStack{
-                TextField("Enter your email", text: $Email).foregroundColor(.black)
-                Divider()
+        VStack {
+            HStack {
+                Image("Bowl_now_pin")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(maxWidth: 10, maxHeight: 30, alignment: .center)
+                    .padding(.leading)
+                TextField("Enter your email", text: $Email)
+                    .font(.subheadline)
+                    .foregroundColor(.black)
+                    .padding()
+                    .keyboardType(.emailAddress)
             }
-        }.background(Color(.white))
+        }.background(Color.white)
         .cornerRadius(10)
-        .opacity(0.9)
-        .padding([.horizontal,.top])
+        .shadow(radius: 5)
+        .padding([.top,.horizontal])
     }
 }
 
 struct UserPasswordField: View {
     @Binding var Password: String
     var body: some View {
-        HStack {
-            Image(systemName: "lock")
-                .foregroundColor(.black)
-                .padding()
-            VStack{
-                TextField("Enter your password", text: $Password).foregroundColor(.black)
-                Divider()
+        VStack {
+            HStack {
+                Image("Bowl_now_pin")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(maxWidth: 10, maxHeight: 30, alignment: .center)
+                    .padding(.leading)
+                SecureField("Enter your password", text: $Password)
+                    .font(.subheadline)
+                    .foregroundColor(.black)
+                    .padding()
             }
-        }.background(Color(.white))
+        }.background(Color.white)
         .cornerRadius(10)
-        .opacity(0.9)
+        .shadow(radius: 5)
         .padding(.horizontal)
     }
 }
@@ -142,18 +186,22 @@ struct UserPasswordField: View {
 struct UserConfirmPasswordField: View {
     @Binding var confirmPassword: String
     var body: some View {
-        HStack {
-            Image(systemName: "lock")
-                .foregroundColor(.black)
-                .padding()
-            VStack {
-            TextField("Re-enter your password", text: $confirmPassword).foregroundColor(.black)
-                Divider()
+        VStack {
+            HStack {
+                Image("Bowl_now_pin")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(maxWidth: 10, maxHeight: 30, alignment: .center)
+                    .padding(.leading)
+                SecureField("Re-enter your password", text: $confirmPassword)
+                    .font(.subheadline)
+                    .foregroundColor(.black)
+                    .padding()
             }
-        }.background(Color(.white))
+        }.background(Color.white)
         .cornerRadius(10)
-        .opacity(0.9)
-        .padding([.horizontal,.bottom])
+        .shadow(radius: 5)
+        .padding(.horizontal)
     }
 }
 
@@ -161,8 +209,3 @@ struct signupResponse: Decodable {
     let Results: String
 }
 
-struct UserRegister_Previews: PreviewProvider {
-    static var previews: some View {
-        UserRegister()
-    }
-}

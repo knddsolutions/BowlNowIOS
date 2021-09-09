@@ -7,6 +7,7 @@
 
 import SwiftUI
 import UIKit
+import MessageUI
 import CodeScanner
 import Kingfisher
 
@@ -18,54 +19,104 @@ struct CenterAdminHome: View {
     @State private var accountMoid: String = ""
     @State private var accountPoints: String = ""
     @State private var user: Array<String> = []
+    @Environment(\.presentationMode) var presentationMode
     var body: some View {
         GeometryReader { geometry in
-            VStack {
+            ZStack(alignment: .bottom) {
                 VStack {
-                    VStack {
-                        NavigationLink(destination: ManageUser(user: $user), isActive: $isShowingManageUser) { EmptyView() }
+                    ScrollView {
+                        NavigationLink(destination: ManageUser(user: $user, accountEditIsActive: $isShowingManageUser), isActive: $isShowingManageUser) { EmptyView() }
                         CenterLogo()
-                            .padding(.top, 50)
-                        Divider()
-                            .padding(.horizontal)
-                        Textinfo()
+                        Textinfo(Info: "Admin Options")
                         Button(action:  {
                             self.isShowingScanner.toggle()
                         }) {
-                            Text("Scan A QR Code")
-                                .bold()
-                                .foregroundColor(.white)
-                        }.frame(maxWidth: .infinity, maxHeight: geometry.size.height/9, alignment: .center)
-                        .background(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
-                        .cornerRadius(10)
-                        .padding()
+                            VStack {
+                                Divider()
+                                HStack {
+                                Text("Scan A QR Code")
+                                    .font(.title3)
+                                    .bold()
+                                    .foregroundColor(.blue)
+                                    .padding()
+                                    Spacer()
+                                    Image(systemName: "arrow.right")
+                                        .foregroundColor(.blue)
+                                        .padding(.trailing)
+                                }
+                                Divider()
+                            }
+                        }.frame(maxWidth: .infinity, alignment: .center)
                         .sheet(isPresented: $isShowingScanner) {
                             CodeScannerView(codeTypes: [.qr], simulatedData: "Paul Hudson\npaul@hackingwithswift.com", completion: self.handleScan)
+                                .edgesIgnoringSafeArea(.all)
                         }
                         Button(action:  {
                             self.isShowingScanner.toggle()
                         }) {
-                            Text("Coming Soon...")
-                                .bold()
-                                .foregroundColor(.white)
-                        }.frame(maxWidth: .infinity, maxHeight: geometry.size.height/9, alignment: .center)
-                        .background(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
-                        .cornerRadius(10)
+                            VStack {
+                                Divider()
+                                HStack {
+                                Text("Coming Soon...")
+                                    .font(.title3)
+                                    .bold()
+                                    .foregroundColor(.blue)
+                                    .padding()
+                                    Spacer()
+                                    Image(systemName: "arrow.right")
+                                        .foregroundColor(.blue)
+                                        .padding(.trailing)
+                                }
+                                Divider()
+                            }
+                        }.frame(maxWidth: .infinity, alignment: .center)
+                        Button(action:  {
+                            let mailtoString = "mailto:k.development@knddsolutions.com?subject=Admin Support&body=Dear BowlNow,".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
+
+                            let mailtoUrl = URL(string: mailtoString!)!
+                            if UIApplication.shared.canOpenURL(mailtoUrl) {
+                                    UIApplication.shared.open(mailtoUrl, options: [:])
+                            }
+                        }) {
+                            VStack {
+                                Divider()
+                                HStack {
+                                    Text("Send Support Request")
+                                        .font(.title3)
+                                        .bold()
+                                        .foregroundColor(.blue)
+                                        .padding()
+                                        Spacer()
+                                    Image(systemName: "arrow.right")
+                                        .foregroundColor(.blue)
+                                        .padding(.trailing)
+                                }
+                                Divider()
+                            }
+                        }.frame(maxWidth: .infinity, alignment: .center)
+                        Textinfo(Info: "Admin Info")
+                            .padding(.top)
+                        VStack(alignment: .leading, spacing: 10) {
+                            Divider()
+                            CenterAdminInfo()
+                            Button(action: {
+                                self.presentationMode.wrappedValue.dismiss()
+                            }) {
+                                Text("Log Me Out")
+                                    .bold()
+                                    .foregroundColor(.white)
+                            }.frame(maxWidth: .infinity, minHeight: 50, maxHeight: 50)
+                            .background(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
+                            .cornerRadius(10)
+                            .padding([.top,.bottom])
+                            Divider()
+                        }.frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.horizontal)
-                        Spacer()
-                    }.background(Image("retro_background")
-                                    .resizable()
-                                    .aspectRatio(geometry.size, contentMode: .fill)
-                                    .edgesIgnoringSafeArea(.all).opacity(0.1))
-                }.frame(width: geometry.size.width, height: geometry.size.height/1.15, alignment: .center)
-                .background(Color.white)
-                .cornerRadius(30)
-                CenterAdminInfo()
-                Spacer()
-            }.frame(width: geometry.size.width, height: geometry.size.height, alignment: .center)
-            .background(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
-        }.edgesIgnoringSafeArea(.all)
-        .navigationBarTitle("")
+                    }
+                }
+            }.navigationBarTitle("", displayMode: .inline)
+            .navigationBarHidden(true)
+        }
     }
     func handleScan(result: Result<String, CodeScannerView.ScanError>) {
         isShowingScanner.toggle()
@@ -89,23 +140,51 @@ struct CenterAdminHome: View {
 struct CenterAdminInfo: View {
     @State var Fname: String = UserDefaults.standard.string(forKey: "Fname") ?? ""
     @State var Lname: String = UserDefaults.standard.string(forKey: "Lname") ?? ""
+    @State var Email: String = UserDefaults.standard.string(forKey: "storeEmail") ?? ""
+    @State var CenterName: String = UserDefaults.standard.string(forKey: "CenterName") ?? ""
     var body: some View {
-        VStack {
-            Text("Admin: \(Fname) \(Lname)")
-                .font(.title2)
-                .bold()
-                .padding()
-                .foregroundColor(.white)
+        VStack(alignment: .leading, spacing: 10) {
+            HStack {
+                Text("Admin: ")
+                    .font(.subheadline)
+                    .bold()
+                Spacer()
+                Text("\(Fname) \(Lname)")
+                    .font(.subheadline)
+                    .bold()
+            }
+            HStack {
+                Text("Center: ")
+                    .font(.subheadline)
+                    .bold()
+                Spacer()
+                Text("\(CenterName)")
+                    .font(.subheadline)
+                    .bold()
+            }
+            HStack {
+                Text("Email: ")
+                    .font(.subheadline)
+                    .bold()
+                Spacer()
+                Text("\(Email)")
+                    .font(.subheadline)
+                    .bold()
+            }
         }
     }
 }
 
 struct Textinfo: View {
+    var Info: String
     var body: some View {
-        Text("What would you like to do today?")
-            .frame(maxWidth:.infinity, alignment: .leading)
-            .padding([.horizontal])
-            .foregroundColor(.black)
+        VStack(alignment: .leading, spacing: 10) {
+                Text(Info)
+                    .font(.title)
+                    .bold()
+                    .foregroundColor(Color(red: 146/255, green: 107/255, blue: 214/255, opacity: 1.0))
+        }.frame(maxWidth: .infinity, alignment: .leading)
+        .padding([.horizontal,.top])
     }
 }
 
@@ -134,7 +213,7 @@ struct CenterLogo: View {
                 .cancelOnDisappear(true)
                 .resizable()
                 .scaledToFit()
-        }.padding(.horizontal)
+        }.padding()
         .onAppear(perform: {
             url = URL(string: BannerURL)
         })
